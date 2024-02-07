@@ -193,21 +193,122 @@
         </div>
       </section>
       <section class="section">
-        <h2 class="section-header">
-          Setting Up Artemis MAC Address and Generating a UUID
-        </h2>
+        <h2 class="section-header">Working with the ECHO Command</h2>
         <div class="text-section">
           <p>
-            The first step to connect the Artemis to Bluetooth was to add the
-            artemis address to the python .yaml file. The next step was to
-            generate a UUID or Universally Unique Identifier. The UUID is useful
-            in establishing a unique identifier for different types of
-            communication or different types of data.
+            To communicate between the computer and the Artemis, a series of
+            commands were made that activate blocks of code on the Artemis. The
+            first command was the ECHO command which sends a string to the
+            Artemis and has the Artemis send the string back.
           </p>
         </div>
-        <div class="image-section">
-          <img src="resources/images/uuid.png" alt="Lab 1 Overview" />
+        <div class="content">
+          <div class="image-section">
+            <img
+              src="resources/images/echo2.png"
+              alt="Lab 1 Detailed
+            Analysis"
+            />
+          </div>
+          <div class="image-section">
+            <img
+              src="resources/images/echo.png"
+              alt="Lab 1 Detailed Analysis"
+            />
+          </div>
         </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Get Time Millis Command</h2>
+        <div class="text-section">
+          <p>
+            This section focused on getting the time in milliseconds since the
+            Artemis started running.
+          </p>
+        </div>
+        <div class="content">
+          <div class="image-section">
+            <img
+              src="resources/images/millis2.png"
+              alt="Lab 1 Detailed
+            Analysis"
+            />
+          </div>
+          <div class="image-section">
+            <img
+              src="resources/images/millis.png"
+              alt="Lab 1 Detailed Analysis"
+            />
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Creating a Notification Handler</h2>
+        <div class="text-section">
+          <p>
+            To handle more incomming data from the Artemis, a notification
+            handler was built. Connecting this notification to a modified
+            version of GET_TIME_MILLIS allows the Artemis to send a stream of
+            millisecond data to the computer. However, because the computor
+            cannot read the data fast enough, not all of it is captured. To
+            account for this, the millis data is gathered first and then sent to
+            the Artemis.
+          </p>
+        </div>
+        <div class="content">
+          <div class="image-section">
+            <img
+              src="resources/images/millis3.png"
+              alt="Lab 1 Detailed
+            Analysis"
+            />
+          </div>
+          <div class="image-section">
+            <img
+              src="resources/images/millis4.png"
+              alt="Lab 1 Detailed Analysis"
+            />
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Getting Temp Data</h2>
+        <div class="text-section">
+          <p>
+            Similarly to how millis data was gathered, temperature data is also
+            gathered. This data is appended onto the millis data to capture the
+            temperature at a given moment of operation. The python script parses
+            the incoming string and extracts the time and temperature data into
+            two seperate arrays.
+          </p>
+        </div>
+        <div class="content">
+          <div class="image-section">
+            <img
+              src="resources/images/temp_string.png"
+              alt="Lab 1 Detailed
+            Analysis"
+            />
+          </div>
+          <div class="image-section">
+            <img
+              src="resources/images/temp2.png"
+              alt="Lab 1 Detailed Analysis"
+            />
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Contrasting the Two Methods of Data Acquisition</h2>
+        <div class="text-section">
+          <p>
+            Directly sending data and to the computer every cycle and gathering it first before sending it proved to have different benefits. 
+            While immediately sending data allows the computer to get it in real time, the data has a large time interval. 
+            This makes it difficult to do calculations that require precise data or handle rapidly changing data sets. 
+            Meanwhile, gathering data first and then sending it allows the Artemis to gather small interval measurements. 
+            However, the data cannot be sent as soon as it is read, meaning completely live calculations cannot be computed. 
+            The best soution is likely a combination of the two methods of data acquisition. Gathering small amounts of data and sending them allows relatively real-time calculations with little lag.
+          </p>
       </section>
     </main>
   </body>
