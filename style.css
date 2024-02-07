@@ -1,0 +1,41 @@
+/* Basic styling for tab bar */
+.tab-bar {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+.tab-bar li {
+  float: left;
+}
+
+.tab-bar li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.tab-bar li a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Project button styles */
+.project-button {
+  display: inline-block;
+  background-color: #f0f0f0;
+  color: #000;
+  text-align: center;
+  margin: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.project-button:hover {
+  background-color: #cccccc;
+}
+
+/* Add more styles for your buttons, images, and text as needed */
