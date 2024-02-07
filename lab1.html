@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 1 - Fast Robots 2024</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      header {
+        background-color: #333;
+        color: white;
+        padding: 10px 20px;
+      }
+      nav ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      nav ul li {
+        display: inline;
+        margin-right: 20px;
+      }
+      nav ul li a {
+        color: white;
+        text-decoration: none;
+      }
+      .section {
+        margin: 20px;
+      }
+      .section-header {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+      .content {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+      }
+      .text-section p {
+        margin: 0;
+      }
+      .image-section {
+        margin-top: 20px; /* Adjusts space between text and image */
+      }
+      .image-section img {
+        width: 700px; /* Adjust based on your preference */
+        height: auto;
+      }
+      .large-image {
+        width: 30%; /* Makes the image take up the full width of its container */
+        height: auto; /* Keeps the image's aspect ratio */
+        display: block; /* Removes any default inline styling */
+        margin: 20px auto; /* Centers the image horizontally */
+      }
+      @media (max-width: 768px) {
+        .content {
+          flex-direction: column;
+        }
+        .image-section img {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="FastRobots_2024.html">Fast Robots 2024</a></li>
+        </ul>
+      </nav>
+    </header>
+    <img
+      src="resources/images/artemis.jpg"
+      alt="Descriptive Alt Text"
+      class="large-image"
+    />
+    <main>
+      <section class="section">
+        <h2 class="section-header">Overview of Lab 1 and 2</h2>
+        <div class="text-section">
+          <p>
+            The focus of lab 1 and 2 was to connect the Artemis to the computer
+            and test out its basic functions, such as blinking, temperature
+            sensing, and sound detection. Additionally, the lab focused on
+            connecting the Artemis to bluetooth and passing information from a
+            python script to the microcontroller and back.
+          </p>
+        </div>
+        <div class="image-section">
+          <img src="resources/images/blink_code.png" alt="Lab 1 Overview" />
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Example 1: Blinking Lights</h2>
+        <div class="text-section">
+          <p>
+            The goal of this example was to have the LED on the Artemis blink
+            using started code.
+          </p>
+        </div>
+        <div class="content">
+          <div class="image-section">
+            <img
+              src="resources/images/blink_code.png"
+              alt="Lab 1 Detailed
+            Analysis"
+            />
+          </div>
+          <div class="image-section">
+            <img
+              src="resources/images/blink.jpg"
+              alt="Lab 1 Detailed Analysis"
+            />
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Example 2: Printing to Serial</h2>
+        <div class="text-section">
+          <p>
+            In this example, the goal was to print the serial monitor. First,
+            the Artemis sent out a counting test to the serial monitor. Then it
+            prompted the user for an input text and printed the text to the
+            serial monitor.
+          </p>
+        </div>
+        <div class="image-section">
+          <img src="resources/images/serial.png" alt="Lab 1 Overview" />
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Example 3: Analog Read</h2>
+        <div class="text-section">
+          <p>
+            In this example, the goal was to read sensor data from the Artemis,
+            spcifically the teamperature data, and print it to the serial
+            monitor.
+          </p>
+        </div>
+        <div class="image-section">
+          <img src="resources/images/temp.png" alt="Lab 1 Overview" />
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Example 5: Microphone Output</h2>
+        <div class="text-section">
+          <p>
+            The goal of this example was to measure the frequeny of sound
+            measured by the Artemis and print it to the serial monitor.
+          </p>
+        </div>
+        <div class="image-section">
+          <img src="resources/images/sound.png" alt="Lab 1 Overview" />
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">
+          Bluetooth Connectivity: Connecting the Artemis
+        </h2>
+        <div class="text-section">
+          <p>
+            To connect the Arduino to bluetooth, we first had to install an
+            arduino starter script. We also downloaded a python script and setup
+            a jupiterlab virtual environment. The goal of this section was to
+            communicate to teh Artemis through bluetooth and have the artemis
+            communicate back as well.
+          </p>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">
+          Setting Up Artemis MAC Address and Generating a UUID
+        </h2>
+        <div class="text-section">
+          <p>
+            The first step to connect the Artemis to Bluetooth was to add the
+            artemis address to the python .yaml file. The next step was to
+            generate a UUID or Universally Unique Identifier. The UUID is useful
+            in establishing a unique identifier for different types of
+            communication or different types of data.
+          </p>
+        </div>
+        <div class="image-section">
+          <img src="resources/images/uuid.png" alt="Lab 1 Overview" />
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">
+          Setting Up Artemis MAC Address and Generating a UUID
+        </h2>
+        <div class="text-section">
+          <p>
+            The first step to connect the Artemis to Bluetooth was to add the
+            artemis address to the python .yaml file. The next step was to
+            generate a UUID or Universally Unique Identifier. The UUID is useful
+            in establishing a unique identifier for different types of
+            communication or different types of data.
+          </p>
+        </div>
+        <div class="image-section">
+          <img src="resources/images/uuid.png" alt="Lab 1 Overview" />
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,8 +1,121 @@
-<div class="project-button">
-  <img
-    src="project-image.jpg"
-    alt="Project Image"
-    style="width: 100px; height: 100px"
-  />
-  <p>Project Description Here</p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projects</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      /* Additional inline CSS for demonstration */
+      .project-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        padding: 20px;
+      }
+      .project {
+        background-color: #f0f0f0;
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+      }
+      .project:hover {
+        background-color: #cccccc;
+      }
+      .project img {
+        width: 100%; /* Adjust as needed */
+        height: auto;
+        margin-bottom: 10px;
+      }
+      .project-description {
+        font-size: 14px;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="tab-bar">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="FastRobots_2024.html">Fast Robots</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main id="projects-container" class="project-grid">
+      <!-- Projects will be inserted here by JavaScript -->
+    </main>
+    <script>
+      // Define an array of projects with name, URL, image, and description
+      const projects = [
+        {
+          name: "Lab 1 and 2",
+          url: "lab1.html",
+          img: "resources/images/artemis.jpg",
+          description: "Setting up the artemis and running bluetooth",
+        },
+        {
+          name: "Lab 3",
+          url: "lab3.html",
+          img: "path/to/image1.jpg",
+          description: "A brief description of lab 3.",
+        },
+        {
+          name: "Lab 4",
+          url: "lab4.html",
+          img: "path/to/image2.jpg",
+          description: "A brief description of lab 4.",
+        },
+        {
+          name: "Lab 5",
+          url: "lab5.html",
+          img: "path/to/image1.jpg",
+          description: "A brief description of lab 5.",
+        },
+        {
+          name: "Lab 6",
+          url: "lab6.html",
+          img: "path/to/image2.jpg",
+          description: "A brief description of lab 6.",
+        },
+        {
+          name: "Lab 7",
+          url: "lab7.html",
+          img: "path/to/image1.jpg",
+          description: "A brief description of lab 7.",
+        },
+        {
+          name: "Lab 8",
+          url: "lab8.html",
+          img: "path/to/image2.jpg",
+          description: "A brief description of lab 8.",
+        },
+        {
+          name: "Lab 9",
+          url: "lab9.html",
+          img: "path/to/image2.jpg",
+          description: "A brief description of lab 9.",
+        },
+        // Add the rest of your projects similarly
+      ];
+
+      // Dynamically generate project elements
+      const container = document.getElementById("projects-container");
+      projects.forEach((project) => {
+        const projectElement = document.createElement("div");
+        projectElement.className = "project";
+        projectElement.innerHTML = `
+                <img src="${project.img}" alt="${project.name}">
+                <div class="project-description">${project.description}</div>
+            `;
+        projectElement.addEventListener("click", () => {
+          window.location.href = project.url;
+        });
+        container.appendChild(projectElement);
+      });
+    </script>
+  </body>
+</html>
