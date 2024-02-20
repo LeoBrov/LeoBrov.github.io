@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lab 1 - Fast Robots 2024</title>
+    <title>Lab 3 - Fast Robots</title>
     <link rel="stylesheet" href="style.css" />
     <style>
       body {
@@ -17,6 +16,10 @@
         background-color: #333;
         color: white;
         padding: 10px 20px;
+      }
+      #main-title {
+        text-align: center;
+        margin-top: 40px; /* Adjust the top margin as needed */
       }
       nav ul {
         list-style-type: none;
@@ -32,28 +35,40 @@
       }
       .section {
         margin: 20px;
+        text-align: center;
       }
       .section-header {
         font-size: 24px;
         margin-bottom: 10px;
+        margin-top: 60px;
+        text-align: center;
       }
       .content {
         display: flex;
         align-items: flex-start;
         gap: 20px;
       }
+      .content-wrapper {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically if you want */
+        width: 100%; /* Take the full width to center content within it */
+        height: 100%; /* Optional: if you want to ensure vertical centering in the entire viewport or a specific height */
+      }
       .text-section p {
-        margin: 0;
+        margin-left: 30%;
+        margin-right: 30%;
+        text-align: justify;
       }
       .image-section {
         margin-top: 20px; /* Adjusts space between text and image */
       }
       .image-section img {
-        width: 700px; /* Adjust based on your preference */
-        height: auto;
+        max-width: 500px; /* Adjust based on your preference */
+        max-height: 250px;
       }
       .large-image {
-        width: 30%; /* Makes the image take up the full width of its container */
+        width: 15%; /* Makes the image take up the full width of its container */
         height: auto; /* Keeps the image's aspect ratio */
         display: block; /* Removes any default inline styling */
         margin: 20px auto; /* Centers the image horizontally */
@@ -66,6 +81,22 @@
           width: 100%;
         }
       }
+      .video-container {
+        position: relative;
+        overflow: hidden;
+        /* Adjust the padding-top value if necessary or remove it if setting iframe size directly */
+        padding-top: 30%; /* Maintain aspect ratio for 16:9 videos */
+        margin: auto; /* Center the video container */
+        max-width: 300px; /* Maximum width of the video */
+      }
+
+      .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%; /* Fill the entire container */
+        height: 100%; /* Fill the entire container */
+      }
     </style>
   </head>
   <body>
@@ -74,242 +105,162 @@
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
-          <li><a href="FastRobots_2024.html">Fast Robots 2024</a></li>
+          <li><a href="FastRobots_2024.html">Fast Robots</a></li>
         </ul>
       </nav>
     </header>
+    <h1 id="main-title">Lab 3</h1>
     <img
-      src="resources/images/artemis.jpg"
+      src="resources/images/3tof.png"
       alt="Descriptive Alt Text"
       class="large-image"
     />
     <main>
       <section class="section">
-        <h2 class="section-header">Overview of Lab 1 and 2</h2>
+        <h2 class="section-header">Overview of Lab 3</h2>
         <div class="text-section">
           <p>
-            The focus of lab 1 and 2 was to connect the Artemis to the computer
-            and test out its basic functions, such as blinking, temperature
-            sensing, and sound detection. Additionally, the lab focused on
-            connecting the Artemis to bluetooth and passing information from a
-            python script to the microcontroller and back.
+            The focus of lab 3 was to use two time of flight sensor to make
+            distance measurements. The lab consists of wiring the ToF sensors
+            with an I2C connection, soldering the wires, and recalibrating the
+            sensors. By connecting the two ToF sensors to the RC car, it is
+            possible to run state estimation and perform stunts. The sensors
+            will likely be connected to the front and side of the car, providing
+            information relevant to forward motion and turning. However, this
+            setup only allows one side to be monitored and cannot detect any
+            object behind the car in case of backward motion.
+          </p>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 1: VL53L1X Sensor</h2>
+        <div class="text-section">
+          <p>
+            The VL53L1X Sensor is a time of flight sensor that uses the phase
+            change of reflected light to calculate the distance to objects. The
+            sensor is connected via a I2C connector. The connector has 4 wires:
+            power, ground, clock, and data. Connecting these to the ToF sensor
+            allows for data communication. I2C communication can also have many
+            sensors connected on one channel, saving wiring and pin space.
+            However, the microcontroller must know the address of each sensor.
+            Since both ToF sensors have the same 0x29 address, the shutdown pin
+            must be used on one of the sensors to change the address of the
+            other sensor. This will allow for both sensors to communicate with
+            the Artemis. Of note, the bootup sequence for the Artemis must first
+            check the current addresses of all the sensors and then change them
+            to avoid misidentification of sensors.
+          </p>
+        </div>
+        <div class="content-wrapper">
+          <div class="content">
+            <div class="image-section">
+              <img
+                src="resources/images/3connection.png"
+                alt="Lab 1 Detailed Analysis"
+              />
+            </div>
+            <div class="image-section">
+              <img
+                src="resources/images/3wirelessSetup.png"
+                alt="Lab 1 Detailed Analysis"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/3proofOfWireless.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 2: Connecting the ToF Sensors</h2>
+        <div class="text-section">
+          <p>
+            To connect the ToF sensors, QWIIC multiport was used, allowing for
+            multiple connection to one line. This also allowed the IMU from the
+            previous lab to remain connected. Both ToF sensors were soldered to
+            the 12C connectors, and the XShut pin on one of the sensors was
+            soldered to the A2 pin on the Artemis. Then, using the example code
+            for the ToF sensor, the address for one of the ToF sensors was
+            identified and a connection was established.
           </p>
         </div>
         <div class="image-section">
-          <img src="resources/images/blink_code.png" alt="Lab 1 Overview" />
+          <img src="resources/images/3circuit.png" alt="Lab 1 Overview" />
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/3tofDetected.png"
+            alt="Lab 1 Detailed Analysis"
+          />
         </div>
       </section>
       <section class="section">
-        <h2 class="section-header">Example 1: Blinking Lights</h2>
+        <h2 class="section-header">Section 3: Using the ToF</h2>
         <div class="text-section">
           <p>
-            The goal of this example was to have the LED on the Artemis blink
-            using started code.
+            Following the example code, the distance was measured with the ToF.
+            Using a ruler to roughly estimate how accurate the sensor is, it was
+            determined that the sensor overestimated the distance by a few
+            millimeteres with .distanceModeShort() and was even more innacurate
+            with .distanceModeLong(). These two settings are important to
+            understand depending on the requirements of the car. Short distance
+            sensing tends to be more accurate, but cannot handle thigns to far
+            away. If the RC car is moving fast and quickly traverses the 1.3m
+            that the short distance setting can detect, it may make more sense
+            to go with the long distance setting that can detect up to 4m away.
           </p>
         </div>
-        <div class="content">
-          <div class="image-section">
-            <img
-              src="resources/images/blink_code.png"
-              alt="Lab 1 Detailed
-            Analysis"
-            />
-          </div>
-          <div class="image-section">
-            <img
-              src="resources/images/blink.jpg"
-              alt="Lab 1 Detailed Analysis"
-            />
-          </div>
+        <div class="video-container">
+          <iframe
+            width="315"
+            height="515"
+            src="https://www.youtube.com/embed/7cq0xTMhRc0"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
         </div>
       </section>
       <section class="section">
-        <h2 class="section-header">Example 2: Printing to Serial</h2>
+        <h2 class="section-header">Section 4: Connecting Two Sensors</h2>
         <div class="text-section">
           <p>
-            In this example, the goal was to print the serial monitor. First,
-            the Artemis sent out a counting test to the serial monitor. Then it
-            prompted the user for an input text and printed the text to the
-            serial monitor.
+            In the previous section, only one sensor was connected. However, the
+            RC car will have two sensors working in parallel. In this section,
+            two sensors are added to the I2C channel and both measure distance
+            at the same time.
           </p>
         </div>
         <div class="image-section">
-          <img src="resources/images/serial.png" alt="Lab 1 Overview" />
+          <img src="resources/images/samplingRate.png" alt="Lab 1 Overview" />
         </div>
       </section>
       <section class="section">
-        <h2 class="section-header">Example 3: Analog Read</h2>
+        <h2 class="section-header">Section 6: Playing Around with the Car</h2>
         <div class="text-section">
           <p>
-            In this example, the goal was to read sensor data from the Artemis,
-            spcifically the teamperature data, and print it to the serial
-            monitor.
+            During this lab, the RC cars were fully charged and became
+            operational. Upon testing, the cars showed relatively easy
+            maneuverability, and very fast acceleration. The acceleration easily
+            allowed the car to do flips. This video is my first attempt at a
+            trick, and all future videos will build on this start.
           </p>
         </div>
-        <div class="image-section">
-          <img src="resources/images/temp.png" alt="Lab 1 Overview" />
+        <div class="video-container">
+          <iframe
+            width="315"
+            height="515"
+            src="https://www.youtube.com/embed/3XCNbzXD4nk"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
         </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Example 5: Microphone Output</h2>
-        <div class="text-section">
-          <p>
-            The goal of this example was to measure the frequeny of sound
-            measured by the Artemis and print it to the serial monitor.
-          </p>
-        </div>
-        <div class="image-section">
-          <img src="resources/images/sound.png" alt="Lab 1 Overview" />
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">
-          Bluetooth Connectivity: Connecting the Artemis
-        </h2>
-        <div class="text-section">
-          <p>
-            To connect the Arduino to bluetooth, we first had to install an
-            arduino starter script. We also downloaded a python script and setup
-            a jupiterlab virtual environment. The goal of this section was to
-            communicate to teh Artemis through bluetooth and have the artemis
-            communicate back as well.
-          </p>
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">
-          Setting Up Artemis MAC Address and Generating a UUID
-        </h2>
-        <div class="text-section">
-          <p>
-            The first step to connect the Artemis to Bluetooth was to add the
-            artemis address to the python .yaml file. The next step was to
-            generate a UUID or Universally Unique Identifier. The UUID is useful
-            in establishing a unique identifier for different types of
-            communication or different types of data.
-          </p>
-        </div>
-        <div class="image-section">
-          <img src="resources/images/uuid.png" alt="Lab 1 Overview" />
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Working with the ECHO Command</h2>
-        <div class="text-section">
-          <p>
-            To communicate between the computer and the Artemis, a series of
-            commands were made that activate blocks of code on the Artemis. The
-            first command was the ECHO command which sends a string to the
-            Artemis and has the Artemis send the string back.
-          </p>
-        </div>
-        <div class="content">
-          <div class="image-section">
-            <img
-              src="resources/images/echo2.png"
-              alt="Lab 1 Detailed
-            Analysis"
-            />
-          </div>
-          <div class="image-section">
-            <img
-              src="resources/images/echo.png"
-              alt="Lab 1 Detailed Analysis"
-            />
-          </div>
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Get Time Millis Command</h2>
-        <div class="text-section">
-          <p>
-            This section focused on getting the time in milliseconds since the
-            Artemis started running.
-          </p>
-        </div>
-        <div class="content">
-          <div class="image-section">
-            <img
-              src="resources/images/millis2.png"
-              alt="Lab 1 Detailed
-            Analysis"
-            />
-          </div>
-          <div class="image-section">
-            <img
-              src="resources/images/millis.png"
-              alt="Lab 1 Detailed Analysis"
-            />
-          </div>
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Creating a Notification Handler</h2>
-        <div class="text-section">
-          <p>
-            To handle more incomming data from the Artemis, a notification
-            handler was built. Connecting this notification to a modified
-            version of GET_TIME_MILLIS allows the Artemis to send a stream of
-            millisecond data to the computer. However, because the computor
-            cannot read the data fast enough, not all of it is captured. To
-            account for this, the millis data is gathered first and then sent to
-            the Artemis.
-          </p>
-        </div>
-        <div class="content">
-          <div class="image-section">
-            <img
-              src="resources/images/millis3.png"
-              alt="Lab 1 Detailed
-            Analysis"
-            />
-          </div>
-          <div class="image-section">
-            <img
-              src="resources/images/millis4.png"
-              alt="Lab 1 Detailed Analysis"
-            />
-          </div>
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Getting Temp Data</h2>
-        <div class="text-section">
-          <p>
-            Similarly to how millis data was gathered, temperature data is also
-            gathered. This data is appended onto the millis data to capture the
-            temperature at a given moment of operation. The python script parses
-            the incoming string and extracts the time and temperature data into
-            two seperate arrays.
-          </p>
-        </div>
-        <div class="content">
-          <div class="image-section">
-            <img
-              src="resources/images/temp_string.png"
-              alt="Lab 1 Detailed
-            Analysis"
-            />
-          </div>
-          <div class="image-section">
-            <img
-              src="resources/images/temp2.png"
-              alt="Lab 1 Detailed Analysis"
-            />
-          </div>
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Contrasting the Two Methods of Data Acquisition</h2>
-        <div class="text-section">
-          <p>
-            Directly sending data and to the computer every cycle and gathering it first before sending it proved to have different benefits. 
-            While immediately sending data allows the computer to get it in real time, the data has a large time interval. 
-            This makes it difficult to do calculations that require precise data or handle rapidly changing data sets. 
-            Meanwhile, gathering data first and then sending it allows the Artemis to gather small interval measurements. 
-            However, the data cannot be sent as soon as it is read, meaning completely live calculations cannot be computed. 
-            The best soution is likely a combination of the two methods of data acquisition. Gathering small amounts of data and sending them allows relatively real-time calculations with little lag.
-          </p>
       </section>
     </main>
   </body>

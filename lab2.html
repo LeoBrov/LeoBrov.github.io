@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lab 1 - Fast Robots 2024</title>
+    <title>Lab 2 - Fast Robots</title>
     <link rel="stylesheet" href="style.css" />
     <style>
       body {
@@ -47,7 +47,6 @@
         display: flex;
         align-items: flex-start;
         gap: 20px;
-        
       }
       .content-wrapper {
         display: flex;
@@ -67,7 +66,6 @@
       .image-section img {
         max-width: 500px; /* Adjust based on your preference */
         max-height: 250px;
-        
       }
       .large-image {
         width: 30%; /* Makes the image take up the full width of its container */
@@ -90,7 +88,7 @@
         margin: auto; /* Center the video container */
         max-width: 560px; /* Maximum width of the video, can adjust based on preference */
       }
-      
+
       .video-container iframe {
         position: absolute;
         top: 0;
@@ -106,7 +104,7 @@
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
-          <li><a href="FastRobots_2024.html">Fast Robots 2024</a></li>
+          <li><a href="FastRobots_2024.html">Fast Robots</a></li>
         </ul>
       </nav>
     </header>
@@ -121,9 +119,9 @@
         <h2 class="section-header">Overview of Lab 2</h2>
         <div class="text-section">
           <p>
-            The focus of lab 2 was to use an IMU to calculate the roll, pitch, 
-            and yaw of the robot we will be building. The lab consisted of 
-            reading IMU data, modifying it to remove noise, and testing the 
+            The focus of lab 2 was to use an IMU to calculate the roll, pitch,
+            and yaw of the robot we will be building. The lab consisted of
+            reading IMU data, modifying it to remove noise, and testing the
             controls of the RC car.
           </p>
         </div>
@@ -132,8 +130,8 @@
         <h2 class="section-header">Section 1: Setting up the IMU</h2>
         <div class="text-section">
           <p>
-            The goal of this section was to setup up the IMU and read the 
-            acceleration and gyroscope data. The IMU uses small, spring like 
+            The goal of this section was to setup up the IMU and read the
+            acceleration and gyroscope data. The IMU uses small, spring like
             mechanism to calculate the x, y, and z acceleration as well as
             angular acceleration.
           </p>
@@ -141,24 +139,33 @@
         <div class="content-wrapper">
           <div class="content">
             <div class="image-section">
-              <img src="resources/images/imuSetup.png" alt="Lab 1 Detailed Analysis" />
+              <img
+                src="resources/images/imuSetup.png"
+                alt="Lab 1 Detailed Analysis"
+              />
             </div>
             <div class="image-section">
-              <img src="resources/images/imuCode.png" alt="Lab 1 Detailed Analysis" />
+              <img
+                src="resources/images/imuCode.png"
+                alt="Lab 1 Detailed Analysis"
+              />
             </div>
           </div>
         </div>
         <div class="text-section">
           <p>
-            To set up the IMU, the ADO_VAL, representing the last bit of the I2C address, first had to be changed from 1 to 0. This is required if the connection in the back of teh IMU is soldered.
+            To set up the IMU, the ADO_VAL, representing the last bit of the I2C
+            address, first had to be changed from 1 to 0. This is required if
+            the connection in the back of teh IMU is soldered.
           </p>
+        </div>
       </section>
       <section class="section">
         <h2 class="section-header">Section 2: Calculating Roll and Pitch</h2>
         <div class="text-section">
           <p>
-            Using the accelerometer data, the roll and pitch were calculated. 
-            Applying the inverse tangent to the acceleration in x and y with 
+            Using the accelerometer data, the roll and pitch were calculated.
+            Applying the inverse tangent to the acceleration in x and y with
             respect to z, gives the roll and pitch.
           </p>
         </div>
@@ -183,14 +190,13 @@
         </div>
         <div class="text-section">
           <p>
-            Although the resulting for roll and pitch data is relatively 
-            accurate, it contains some noise. The noise only exists in 
-            specific frequencies, so it is possibly to remove it through a 
-            fourier decomposition and a low pass filter. Using python, the
-            pitch and roll data was analysed and the frequencies mainly populated
-            by noise were identified. However, due to the internal low pass
-            filter in the IMU, very little high frequency noise is present in 
-            the readings.
+            Although the resulting for roll and pitch data is relatively
+            accurate, it contains some noise. The noise only exists in specific
+            frequencies, so it is possibly to remove it through a fourier
+            decomposition and a low pass filter. Using python, the pitch and
+            roll data was analysed and the frequencies mainly populated by noise
+            were identified. However, due to the internal low pass filter in the
+            IMU, very little high frequency noise is present in the readings.
           </p>
         </div>
         <div class="content-wrapper">
@@ -214,13 +220,13 @@
         <h2 class="section-header">Section 3: Using the Gyroscope</h2>
         <div class="text-section">
           <p>
-              To capture the yaw of the IMU and refine the readings, 
-              it is necessary to use the gyroscope. Similar to the accelerometer,
-              the gyrsocope uses a spring mass system to calculate the rotational
-              acceleration of the IMU. However, using the gyrsocope to calculate
-              pitch, roll, and yaw creates drift in the readings because the 
-              gyroscope integrates over time. Bellow is a comparison of pitch 
-              calculated on a gyroscope and an accelerometer.
+            To capture the yaw of the IMU and refine the readings, it is
+            necessary to use the gyroscope. Similar to the accelerometer, the
+            gyrsocope uses a spring mass system to calculate the rotational
+            acceleration of the IMU. However, using the gyrsocope to calculate
+            pitch, roll, and yaw creates drift in the readings because the
+            gyroscope integrates over time. Bellow is a comparison of pitch
+            calculated on a gyroscope and an accelerometer.
           </p>
         </div>
         <div class="image-section">
@@ -228,8 +234,9 @@
         </div>
         <div class="text-section">
           <p>
-              Using a complementary filter, the gyroscopic readings can be combined
-              with the readings from the accelerometer to give more precise measurements.
+            Using a complementary filter, the gyroscopic readings can be
+            combined with the readings from the accelerometer to give more
+            precise measurements.
           </p>
         </div>
         <div class="content-wrapper">
@@ -251,8 +258,8 @@
         </div>
         <div class="text-section">
           <p>
-              Alpha was calculated to be 0.1. This allows for smoother and more
-              responsive measurements.
+            Alpha was calculated to be 0.1. This allows for smoother and more
+            responsive measurements.
           </p>
         </div>
       </section>
@@ -260,9 +267,9 @@
         <h2 class="section-header">Section 5: Sampling Rate</h2>
         <div class="text-section">
           <p>
-            Eliminating any print statements and optimizing the code, the sampling
-            rate for the pitch, roll, and yaw measurements was determined to be 20Hz
-            or 0.05s per measurement.
+            Eliminating any print statements and optimizing the code, the
+            sampling rate for the pitch, roll, and yaw measurements was
+            determined to be 20Hz or 0.05s per measurement.
           </p>
         </div>
         <div class="image-section">
@@ -270,20 +277,27 @@
         </div>
       </section>
       <section class="section">
-        <h2 class="section-header">
-          Section 6: Playing Around with the Car
-        </h2>
+        <h2 class="section-header">Section 6: Playing Around with the Car</h2>
         <div class="text-section">
           <p>
-            During this lab, the RC cars were fully charged and became operational.
-            Upon testing, the cars showed relatively easy maneuverability, and very fast
-            acceleration. The acceleration easily allowed the car to do flips. This video
-            is my first attempt at a trick, and all future videos will build on this start.
+            During this lab, the RC cars were fully charged and became
+            operational. Upon testing, the cars showed relatively easy
+            maneuverability, and very fast acceleration. The acceleration easily
+            allowed the car to do flips. This video is my first attempt at a
+            trick, and all future videos will build on this start.
           </p>
         </div>
-          <div class="video-container">
-            <iframe width="315" height="515" src="https://www.youtube.com/embed/3XCNbzXD4nk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
+        <div class="video-container">
+          <iframe
+            width="315"
+            height="515"
+            src="https://www.youtube.com/embed/3XCNbzXD4nk"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
       </section>
     </main>
   </body>
