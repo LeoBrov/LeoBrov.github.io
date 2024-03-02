@@ -181,7 +181,7 @@
             To connect the ToF sensors, QWIIC multiport was used, allowing for
             multiple connection to one line. This also allowed the IMU from the
             previous lab to remain connected. Both ToF sensors were soldered to
-            the 12C connectors, and the XShut pin on one of the sensors was
+            the I2C connectors, and the XShut pin on one of the sensors was
             soldered to the A2 pin on the Artemis. Then, using the example code
             for the ToF sensor, the address for one of the ToF sensors was
             identified and a connection was established.
@@ -226,40 +226,82 @@
         </div>
       </section>
       <section class="section">
-        <h2 class="section-header">Section 4: Connecting Two Sensors</h2>
+        <h2 class="section-header">
+          Section 4: Quantifying Sensor Performance
+        </h2>
+        <div class="text-section">
+          <p>
+            To determine the performance of the sensors a test was conducted
+            comparing the calculated distance displayed by the sensors with a
+            hand measured distance. The sensors proved to be quite accurate
+            within their specified range. It was also important to determine the
+            repeatability of the measurements at different distances, so the
+            standard deviation for 10 measurements was calculated at different
+            distances. Finally, the speed of data collection was calculated for
+            the sensor by recording the time of each measurement.
+          </p>
+        </div>
+        <div class="content-wrapper">
+          <div class="content">
+            <div class="image-section">
+              <img
+                src="resources/images/3measurements.png"
+                alt="Lab 1 Detailed Analysis"
+              />
+            </div>
+            <div class="image-section">
+              <img
+                src="resources/images/3std.png"
+                alt="Lab 1 Detailed Analysis"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/3rangeCode.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/3rangeTime.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 5: Connecting Two Sensors</h2>
         <div class="text-section">
           <p>
             In the previous section, only one sensor was connected. However, the
             RC car will have two sensors working in parallel. In this section,
             two sensors are added to the I2C channel and both measure distance
-            at the same time.
+            at the same time. Since both sensors were on one I2C line, the
+            address of one sensor was changed while the other was turned off
+            with the XShut pin. This allowed both sensors to work
+            simultaneously.
           </p>
         </div>
         <div class="image-section">
-          <img src="resources/images/samplingRate.png" alt="Lab 1 Overview" />
+          <img src="resources/images/3twoSensors.png" alt="Lab 1 Overview" />
         </div>
       </section>
       <section class="section">
-        <h2 class="section-header">Section 6: Playing Around with the Car</h2>
+        <h2 class="section-header">Section 6: Sending Data for Both Sensors</h2>
         <div class="text-section">
           <p>
-            During this lab, the RC cars were fully charged and became
-            operational. Upon testing, the cars showed relatively easy
-            maneuverability, and very fast acceleration. The acceleration easily
-            allowed the car to do flips. This video is my first attempt at a
-            trick, and all future videos will build on this start.
+            Since the RC car will communcate with the sensors over bluetooth, it
+            is important to be able to display the measured data vs time. The
+            following is a plot of data transmitted onto the computer over
+            bluetooth. It was determined that sending 25 data points was a
+            reasonable amount to transmit to the computer. 25 data points was
+            fast enough for the data to be relavant and fast enough for live
+            processing of the data.
           </p>
         </div>
-        <div class="video-container">
-          <iframe
-            width="315"
-            height="515"
-            src="https://www.youtube.com/embed/3XCNbzXD4nk"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
+        <div class="image-section">
+          <img src="resources/images/3tofData.png" alt="Lab 1 Overview" />
         </div>
       </section>
     </main>
