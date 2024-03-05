@@ -1,1 +1,354 @@
-Not implemented yet
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 4 - Fast Robots</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      header {
+        background-color: #333;
+        color: white;
+        padding: 10px 20px;
+      }
+      #main-title {
+        text-align: center;
+        margin-top: 40px; /* Adjust the top margin as needed */
+      }
+      nav ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      nav ul li {
+        display: inline;
+        margin-right: 20px;
+      }
+      nav ul li a {
+        color: white;
+        text-decoration: none;
+      }
+      .section {
+        margin: 20px;
+        text-align: center;
+      }
+      .section-header {
+        font-size: 24px;
+        margin-bottom: 10px;
+        margin-top: 60px;
+        text-align: center;
+      }
+      .content {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+      }
+      .content-wrapper {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically if you want */
+        width: 100%; /* Take the full width to center content within it */
+        height: 100%; /* Optional: if you want to ensure vertical centering in the entire viewport or a specific height */
+      }
+      .text-section p {
+        margin-left: 30%;
+        margin-right: 30%;
+        text-align: justify;
+      }
+      .image-section {
+        margin-top: 20px; /* Adjusts space between text and image */
+      }
+      .image-section img {
+        max-width: 500px; /* Adjust based on your preference */
+        max-height: 250px;
+      }
+      .large-image {
+        width: 15%; /* Makes the image take up the full width of its container */
+        height: auto; /* Keeps the image's aspect ratio */
+        display: block; /* Removes any default inline styling */
+        margin: 20px auto; /* Centers the image horizontally */
+      }
+      @media (max-width: 768px) {
+        .content {
+          flex-direction: column;
+        }
+        .image-section img {
+          width: 100%;
+        }
+      }
+      .video-container {
+        position: relative;
+        overflow: hidden;
+        /* Adjust the padding-top value if necessary or remove it if setting iframe size directly */
+        padding-top: 30%; /* Maintain aspect ratio for 16:9 videos */
+        margin: auto; /* Center the video container */
+        max-width: 300px; /* Maximum width of the video */
+      }
+
+      .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%; /* Fill the entire container */
+        height: 100%; /* Fill the entire container */
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="FastRobots_2024.html">Fast Robots</a></li>
+        </ul>
+      </nav>
+    </header>
+    <h1 id="main-title">Lab 4</h1>
+    <img
+      src="resources/images/3tof.png"
+      alt="Descriptive Alt Text"
+      class="large-image"
+    />
+    <main>
+      <section class="section">
+        <h2 class="section-header">Overview of Lab 4</h2>
+        <div class="text-section">
+          <p>
+            The objective of this lab was to control the RC car with the Artemis
+            microcontroller. To do so, it was necessary to replace the internal
+            components of the RC car with new components driven by the Artemis,
+            specifically two motor drivers and all the electronics explored in
+            the previous labs.
+          </p>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Prelab</h2>
+        <div class="text-section">
+          <p>
+            The first important consideration of this lab was which pins to
+            connect the motor drivers to. Pins 8 and 10 on the Artemis cannot be
+            used for PWM, so the chosen pins were 4, 5, 6, and 7. These were
+            conveniently placed near each other and allowed for easy placement
+            of the motor drivers inside the RC car. The next consideration was
+            how to power the motors. The motors need to have their own battery
+            because they draw a lot of power and may interfere with the Artemis
+            if they are all connected to one power supply. As such both motors
+            were connected to a designated 850mAh battery with a rated voltage
+            of 3.7V, which is suitable for the motors. This battery was powerful
+            enough to power both motors. Finally, it was important to consider
+            wire lengths when soldering the circuit due to the placement
+            requirements of certain components, such as the time of flight
+            sensors, within the car.
+          </p>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/4wiring.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 1: Testing the Motor Drivers</h2>
+        <div class="text-section">
+          <p>
+            To make sure that the motor drivers were working as intended, it was
+            necessary to test them before soldering them to the motors. The
+            initial test was simply making sure that all the pins were properly
+            connected. Using a multimeter, the continuity of all the wires was
+            checked and the circuit was confirmed to be wired correctly. The
+            next step was to test if the proper PWM signal was produced by the
+            motor drivers. To test this, both motor drivers were connected to
+            the Artemis, and a power supply with 3.7V. It was important for the
+            power supply to mirror the voltage of the battery such that the test
+            accurately matched the real circuit and so that none of the
+            components would blow up. Using analogWrite() on the two pins of the
+            motor drivers, a PWM signal was produced that was measured by the
+            oscilloscope. Since only one set of BNC test leads for the
+            oscilloscope was available at the time of measurement, the two motor
+            drivers were tested individually.
+          </p>
+        </div>
+        <div class="content-wrapper">
+          <div class="content">
+            <div class="image-section">
+              <img
+                src="resources/images/4silly1.png"
+                alt="Lab 1 Detailed Analysis"
+              />
+            </div>
+            <div class="image-section">
+              <img
+                src="resources/images/4silly2.png"
+                alt="Lab 1 Detailed Analysis"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/4setup.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 2: Running the Car</h2>
+        <div class="text-section">
+          <p>
+            After confirming that the circuit worked correctly, the internal
+            components of the RC car were removed. The motor drivers were then
+            soldered to the motors following the circuit mentioned in the
+            prelab. Finally, the motors were tested by running code that would
+            spin each set of wheels forward and then backward. After confirming
+            that the test worked when powered by the computers, it was repeated
+            with an independent battery powering the RC car.
+          </p>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/4internals.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/4motorControlCode2.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/4motorControlCode.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="video-container">
+          <iframe
+            width="315"
+            height="515"
+            src="https://www.youtube.com/embed/0SVo0Ap9vJw"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div class="video-container">
+          <iframe
+            width="315"
+            height="515"
+            src="https://www.youtube.com/embed/kPxSRz9Mc1k"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div class="video-container">
+          <iframe
+            width="315"
+            height="515"
+            src="https://www.youtube.com/embed/1CkGAed5vhY"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 3: Exploring PWM Limits</h2>
+        <div class="text-section">
+          <p>
+            Due to inertial restrictions and frictional forces, PWM signals
+            under a certain threshold do not cause the car to move forward. It
+            was therefore necessary to determine what PWM frequency was
+            sufficient to move the car. To accomplish this, the car was set to
+            discretely increase the PWM signal until it started moving. By
+            observing when the motion occurred, it was possible to identify the
+            minimum PWM signal required to move the car. During tests, the car
+            would sometimes start at duty cycles as low 32/256. However, the
+            duty cycles of 48/256 proved to be the most reliable in consistently
+            making the car move forward, so it was designated as the minimum
+            threshold.
+          </p>
+        </div>
+        <div class="video-container">
+          <iframe
+            width="315"
+            height="515"
+            src="https://www.youtube.com/embed/K5d29At0BUA"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 4: Calibrating the Motors</h2>
+        <div class="text-section">
+          <p>
+            Although both motors are theoretically identical, in the real world
+            they have some differences. As such both motors may not spin at the
+            exact same speed when powered by the same PWM signal. However, using
+            a calibration factor on one motor would allow for the two motors to
+            move in sync. In my case, even with no calibration factor, the
+            motors moved at almost the same rates. However, increasing the PWM
+            of the left motor by 1.02 proved to slightly minimize the
+            differences between the two motors. To test the differences in the
+            motors, the car was programmed to move in a straight line.
+          </p>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/4calibrationFactor.png"
+            alt="Lab 1 Overview"
+          />
+        </div>
+        <div class="video-container">
+          <iframe
+            width="315"
+            height="515"
+            src="https://www.youtube.com/embed/xxdfd9fzjtw"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 5: Playing around with the car</h2>
+        <div class="text-section">
+          <p>
+            With the circuit complete and the motors calibration, it was time to
+            test some moves. Keeping it simple, I had the car move forward and
+            backward and then perform an S maneuver. The control for this was
+            entirely open-loop, so there was no internal feedback. However, the
+            car still performed relatively well.
+          </p>
+        </div>
+        <div class="video-container">
+          <iframe
+            width="315"
+            height="515"
+            src="https://www.youtube.com/embed/oFeYfrA6AE0"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
