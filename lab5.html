@@ -8,6 +8,7 @@
     <style>
       body {
         font-family: Arial, sans-serif;
+        font-size: 18px;
         margin: 0;
         padding: 0;
         box-sizing: border-box;
@@ -38,7 +39,7 @@
         text-align: center;
       }
       .section-header {
-        font-size: 24px;
+        font-size: 30px;
         margin-bottom: 10px;
         margin-top: 60px;
         text-align: center;
@@ -64,8 +65,8 @@
         margin-top: 20px; /* Adjusts space between text and image */
       }
       .image-section img {
-        max-width: 500px; /* Adjust based on your preference */
-        max-height: 250px;
+        max-width: 600px; /* Adjust based on your preference */
+        max-height: 450px;
       }
       .large-image {
         width: 30%; /* Makes the image take up the full width of its container */
@@ -120,11 +121,12 @@
         <h2 class="section-header">Overview of Lab 5</h2>
         <div class="text-section">
           <p>
-            The objective of this lab was to control the RC car with the Artemis
-            microcontroller. To do so, it was necessary to replace the internal
-            components of the RC car with new components driven by the Artemis,
-            specifically two motor drivers and all the electronics explored in
-            the previous labs.
+            The goal of lab 5 was to design and implement a positional PID
+            controller for the RC car. Using any combination of proportional,
+            integral, and derivative control, the car should be able to go to
+            any position 2-4 meters away from a wall. The car should also be
+            able to achieve positional control on different surfaces without
+            difficulty.
           </p>
         </div>
       </section>
@@ -132,103 +134,129 @@
         <h2 class="section-header">Prelab</h2>
         <div class="text-section">
           <p>
-            The first important consideration of this lab was which pins to
-            connect the motor drivers to. Pins 8 and 10 on the Artemis cannot be
-            used for PWM, so the chosen pins were 4, 5, 6, and 7. These were
-            conveniently placed near each other and allowed for easy placement
-            of the motor drivers inside the RC car. The next consideration was
-            how to power the motors. The motors need to have their own battery
-            because they draw a lot of power and may interfere with the Artemis
-            if they are all connected to one power supply. As such both motors
-            were connected to a designated 850mAh battery with a rated voltage
-            of 3.7V, which is suitable for the motors. This battery was powerful
-            enough to power both motors. Finally, it was important to consider
-            wire lengths when soldering the circuit due to the placement
-            requirements of certain components, such as the time of flight
-            sensors, within the car.
+            Before starting the lab, the system for sending data over Bluetooth
+            was established. The following commands were created to execute
+            actions on the Artemis.
           </p>
         </div>
         <div class="image-section">
           <img
-            src="resources/images/4wiring.png"
+            src="resources/images/5cmndTypes.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="text-section">
+          <p>
+            To analyze the performance or failure of the RC car, developing a
+            debug command was particularly important. The debug command requests
+            data from the Artemis to later be processed in Python. The command
+            takes in a data type and quantity and returns the requested amount
+            of time-stamped data. On the Artemis side, the data arrays are
+            populated every time the PID controller runs. Once the data is in
+            Python, it can be analyzed separately.
+          </p>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/5debugCatch.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/5populateArray.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/5pythonDebug.png"
             alt="Lab 1 Detailed Analysis"
           />
         </div>
       </section>
       <section class="section">
-        <h2 class="section-header">Section 1: Testing the Motor Drivers</h2>
+        <h2 class="section-header">Section 1: Optimizing Sampling</h2>
         <div class="text-section">
           <p>
-            To make sure that the motor drivers were working as intended, it was
-            necessary to test them before soldering them to the motors. The
-            initial test was simply making sure that all the pins were properly
-            connected. Using a multimeter, the continuity of all the wires was
-            checked and the circuit was confirmed to be wired correctly. The
-            next step was to test if the proper PWM signal was produced by the
-            motor drivers. To test this, both motor drivers were connected to
-            the Artemis, and a power supply with 3.7V. It was important for the
-            power supply to mirror the voltage of the battery such that the test
-            accurately matched the real circuit and so that none of the
-            components would blow up. Using analogWrite() on the two pins of the
-            motor drivers, a PWM signal was produced that was measured by the
-            oscilloscope. Since only one set of BNC test leads for the
-            oscilloscope was available at the time of measurement, the two motor
-            drivers were tested individually.
+            To create a usable PID controller, it is necessary to optimize the
+            sampling rate of the time of flight sensors and decouple the PID
+            loop from the sensors. One possible solution to increasing the
+            sampling rate of the ToF sensors is to lower their accuracy and
+            remove any delays or print statements in the loop. However, even
+            with optimization, the maximum refresh rate of the sensors is 50Hz.
+            To increase the rate that the PID loop runs, the sensors and PID
+            were decoupled from each other. Instead of waiting for the sensors
+            to be ready before continuing to run PID, the PID was run every loop
+            cycle and the sensors only returned data when they were ready. Using
+            this method, the PID loop ran much faster than the ToF sensors
+            gathered data, allowing for more processing. To provide accurate
+            data to the PID loop, the distance from the wall was linearly
+            extrapolated between sensor measurements.
           </p>
-        </div>
-        <div class="content-wrapper">
-          <div class="content">
-            <div class="image-section">
-              <img
-                src="resources/images/4silly1.png"
-                alt="Lab 1 Detailed Analysis"
-              />
-            </div>
-            <div class="image-section">
-              <img
-                src="resources/images/4silly2.png"
-                alt="Lab 1 Detailed Analysis"
-              />
-            </div>
-          </div>
         </div>
         <div class="image-section">
           <img
-            src="resources/images/4setup.png"
+            src="resources/images/5PIDLoop.png"
             alt="Lab 1 Detailed Analysis"
           />
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/5LinExt.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="text-section">
+          <p>
+            With these optimizations, the PID loop ran roughly 12 times faster
+            than the ToF sensors returned data.
+          </p>
         </div>
       </section>
       <section class="section">
-        <h2 class="section-header">Section 2: Running the Car</h2>
+        <h2 class="section-header">Section 2: Designing PID</h2>
         <div class="text-section">
           <p>
-            After confirming that the circuit worked correctly, the internal
-            components of the RC car were removed. The motor drivers were then
-            soldered to the motors following the circuit mentioned in the
-            prelab. Finally, the motors were tested by running code that would
-            spin each set of wheels forward and then backward. After confirming
-            that the test worked when powered by the computers, it was repeated
-            with an independent battery powering the RC car.
+            Once the framework for the PID controller was built, it was time to
+            design the controller itself. The first step was calculating
+            reasonable Kp values for proportional control. The motor runs on
+            duty cycles between 0 and 255 and the distance from the ToF sensors
+            is measured in mm. Since we don’t want to run the motors at full
+            power for energy conservation and we don’t want the car to be in its
+            deadband range, the useable PWM values were 40 to 180. While the
+            maximum PWM signal is hard coded into the motor code, the minimum is
+            added to the PID control signal, giving this equation: input = Kp *
+            error + minInput. Assuming that the motor should not be at maximum
+            speed within 1000mm of its target position, the maximum Kp value is
+            (180 - 40)/1000 = 0.14. Meanwhile, assuming the motor should be
+            moving at an arbitrary PWM of 41 within 100mm of the target
+            position, the minimum Kp value is (41-40)/100 = 0.01. With
+            reasonable values for Kp established, the Ziegler-Nichols method was
+            used to calculate reasonable Kp, Ki, and Kd and then they were
+            fine-tuned to final values of Kp = 0.03, Ki = 0.01, Kd = 1. Beyond
+            designing a standard PID controller, a few extra “hacks” were
+            implemented to improve performance. The most active one was using
+            active breaking to stop that car whenever it was within 20mm of the
+            target distance. This prevents oscillations around the goal and
+            allows for fast settling time.
           </p>
         </div>
         <div class="image-section">
-          <img
-            src="resources/images/4internals.png"
-            alt="Lab 1 Detailed Analysis"
-          />
+          <img src="resources/images/5PID.png" alt="Lab 1 Detailed Analysis" />
         </div>
-        <div class="image-section">
-          <img
-            src="resources/images/4motorControlCode2.png"
-            alt="Lab 1 Detailed Analysis"
-          />
-        </div>
-        <div class="image-section">
-          <img
-            src="resources/images/4motorControlCode.png"
-            alt="Lab 1 Detailed Analysis"
-          />
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 3: Running PID</h2>
+        <div class="text-section">
+          <p>
+            Finally, with all the values calculated, it was time to test the
+            robustness of the PID controller. The goal was to have the car move
+            on multiple surfaces and avoid crashing into walls. To analyze the
+            performance of the PID controller, the maximum linear speed was
+            calculated to be SPEED, and distance vs. time and input vs. error
+            were plotted.
+          </p>
         </div>
         <div class="video-container">
           <iframe
@@ -263,90 +291,21 @@
             allowfullscreen
           ></iframe>
         </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Section 3: Exploring PWM Limits</h2>
-        <div class="text-section">
-          <p>
-            Due to inertial restrictions and frictional forces, PWM signals
-            under a certain threshold do not cause the car to move forward. It
-            was therefore necessary to determine what PWM frequency was
-            sufficient to move the car. To accomplish this, the car was set to
-            discretely increase the PWM signal until it started moving. By
-            observing when the motion occurred, it was possible to identify the
-            minimum PWM signal required to move the car. During tests, the car
-            would sometimes start at duty cycles as low 32/256. However, the
-            duty cycles of 48/256 proved to be the most reliable in consistently
-            making the car move forward, so it was designated as the minimum
-            threshold.
-          </p>
-        </div>
-        <div class="video-container">
-          <iframe
-            width="315"
-            height="515"
-            src="https://www.youtube.com/embed/K5d29At0BUA"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Section 4: Calibrating the Motors</h2>
-        <div class="text-section">
-          <p>
-            Although both motors are theoretically identical, in the real world
-            they have some differences. As such both motors may not spin at the
-            exact same speed when powered by the same PWM signal. However, using
-            a calibration factor on one motor would allow for the two motors to
-            move in sync. In my case, even with no calibration factor, the
-            motors moved at almost the same rates. However, increasing the PWM
-            of the left motor by 1.02 proved to slightly minimize the
-            differences between the two motors. To test the differences in the
-            motors, the car was programmed to move in a straight line.
-          </p>
-        </div>
-        <div class="image-section">
-          <img
-            src="resources/images/4calibrationFactor.png"
-            alt="Lab 1 Overview"
-          />
-        </div>
-        <div class="video-container">
-          <iframe
-            width="315"
-            height="515"
-            src="https://www.youtube.com/embed/xxdfd9fzjtw"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Section 5: Playing around with the car</h2>
-        <div class="text-section">
-          <p>
-            With the circuit complete and the motors calibration, it was time to
-            test some moves. Keeping it simple, I had the car move forward and
-            backward and then perform an S maneuver. The control for this was
-            entirely open-loop, so there was no internal feedback. However, the
-            car still performed relatively well.
-          </p>
-        </div>
-        <div class="video-container">
-          <iframe
-            width="315"
-            height="515"
-            src="https://www.youtube.com/embed/oFeYfrA6AE0"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
+        <div class="content-wrapper">
+          <div class="content">
+            <div class="image-section">
+              <img
+                src="resources/images/4silly1.png"
+                alt="Lab 1 Detailed Analysis"
+              />
+            </div>
+            <div class="image-section">
+              <img
+                src="resources/images/4silly2.png"
+                alt="Lab 1 Detailed Analysis"
+              />
+            </div>
+          </div>
         </div>
       </section>
     </main>
