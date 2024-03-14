@@ -234,8 +234,8 @@
             position, the minimum Kp value is (41-40)/100 = 0.01. With
             reasonable values for Kp established, the Ziegler-Nichols method was
             used to calculate reasonable Kp, Ki, and Kd and then they were
-            fine-tuned to final values of Kp = 0.03, Ki = 0.01, Kd = 1. Beyond
-            designing a standard PID controller, a few extra “hacks” were
+            fine-tuned to final values of Kp = 0.02, Ki = 0.001, Kd = 0.2.
+            Beyond designing a standard PID controller, a few extra “hacks” were
             implemented to improve performance. The most active one was using
             active breaking to stop that car whenever it was within 20mm of the
             target distance. This prevents oscillations around the goal and
@@ -254,7 +254,7 @@
             robustness of the PID controller. The goal was to have the car move
             on multiple surfaces and avoid crashing into walls. To analyze the
             performance of the PID controller, the maximum linear speed was
-            calculated to be SPEED, and distance vs. time and input vs. error
+            calculated to be 1.1m/s, and distance vs. time and input vs. time
             were plotted.
           </p>
         </div>
@@ -295,13 +295,13 @@
           <div class="content">
             <div class="image-section">
               <img
-                src="resources/images/4silly1.png"
+                src="resources/images/5tvdist.png"
                 alt="Lab 1 Detailed Analysis"
               />
             </div>
             <div class="image-section">
               <img
-                src="resources/images/4silly2.png"
+                src="resources/images/5tvinp.png"
                 alt="Lab 1 Detailed Analysis"
               />
             </div>
