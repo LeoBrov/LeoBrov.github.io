@@ -69,8 +69,8 @@
         max-height: 450px;
       }
       .large-image {
-        width: 30%; /* Makes the image take up the full width of its container */
-        height: auto; /* Keeps the image's aspect ratio */
+        max-width: 30%; /* Makes the image take up the full width of its container */
+        max-height: 30%; /* Keeps the image's aspect ratio */
         display: block; /* Removes any default inline styling */
         margin: 20px auto; /* Centers the image horizontally */
       }
@@ -110,23 +110,21 @@
         </ul>
       </nav>
     </header>
-    <h1 id="main-title">Lab 5</h1>
+    <h1 id="main-title">Lab 6</h1>
     <img
-      src="resources/images/5title.png"
+      src="resources/images/6quats.png"
       alt="Descriptive Alt Text"
       class="large-image"
     />
     <main>
       <section class="section">
-        <h2 class="section-header">Overview of Lab 5</h2>
+        <h2 class="section-header">Overview of Lab 6</h2>
         <div class="text-section">
           <p>
-            The goal of lab 5 was to design and implement a positional PID
-            controller for the RC car. Using any combination of proportional,
-            integral, and derivative control, the car should be able to go to
-            any position 2-4 meters away from a wall. The car should also be
-            able to achieve positional control on different surfaces without
-            difficulty.
+            The goal of lab 6 was to implement a PID controller for angular
+            position. This lab was similar to the linear position PID
+            controller, but there were some new considerations that needed to be
+            handled and the overall controller was improved.
           </p>
         </div>
       </section>
@@ -134,135 +132,96 @@
         <h2 class="section-header">Prelab</h2>
         <div class="text-section">
           <p>
-            Before starting the lab, the system for sending data over Bluetooth
-            was established. The following commands were created to execute
-            actions on the Artemis.
+            Similar to lab 5, a set of commands was developed for rotational PID
+            control. To handle debugging the car, the same debug commands were
+            used as in lab 5. The debug commands now included a data request for
+            pitch, roll, and yaw.
           </p>
         </div>
         <div class="image-section">
           <img
-            src="resources/images/5cmndTypes.png"
-            alt="Lab 1 Detailed Analysis"
-          />
-        </div>
-        <div class="text-section">
-          <p>
-            To analyze the performance or failure of the RC car, developing a
-            debug command was particularly important. The debug command requests
-            data from the Artemis to later be processed in Python. The command
-            takes in a data type and quantity and returns the requested amount
-            of time-stamped data. On the Artemis side, the data arrays are
-            populated every time the PID controller runs. Once the data is in
-            Python, it can be analyzed separately.
-          </p>
-        </div>
-        <div class="image-section">
-          <img
-            src="resources/images/5debugCatch.png"
+            src="resources/images/6commands.png"
             alt="Lab 1 Detailed Analysis"
           />
         </div>
         <div class="image-section">
           <img
-            src="resources/images/5populateArray.png"
-            alt="Lab 1 Detailed Analysis"
-          />
-        </div>
-        <div class="image-section">
-          <img
-            src="resources/images/5pythonDebug.png"
+            src="resources/images/6debug.png"
             alt="Lab 1 Detailed Analysis"
           />
         </div>
       </section>
       <section class="section">
-        <h2 class="section-header">Section 1: Optimizing Sampling</h2>
+        <h2 class="section-header">Section 1: Getting Sensor Data</h2>
         <div class="text-section">
           <p>
-            To create a usable PID controller, it is necessary to optimize the
-            sampling rate of the time of flight sensors and decouple the PID
-            loop from the sensors. One possible solution to increasing the
-            sampling rate of the ToF sensors is to lower their accuracy and
-            remove any delays or print statements in the loop. However, even
-            with optimization, the maximum refresh rate of the sensors is 50Hz.
-            To increase the rate that the PID loop runs, the sensors and PID
-            were decoupled from each other. Instead of waiting for the sensors
-            to be ready before continuing to run PID, the PID was run every loop
-            cycle and the sensors only returned data when they were ready. Using
-            this method, the PID loop ran much faster than the ToF sensors
-            gathered data, allowing for more processing. To provide accurate
-            data to the PID loop, the distance from the wall was linearly
-            extrapolated between sensor measurements.
+            Unlike lab 5, the sensor used for this controller was an IMU. The
+            IMU has a built-in gyroscope that can be integrated to calculate the
+            yaw of the car. Initially, I implemented the orientation controller
+            using the gyroscope and a low-pass filter to eliminate noise.
+            However, I discovered that there were issues with accuracy and
+            drift, so I decided to switch to using the DMP firmware on the IMU
+            that uses sensor fusion to calculate quaternions for orientation.
+            This proved to be much more accurate and reliable. Based on the
+            documentation, the predicted sample frequency for this method is
+            55Hz. In practice, I also got 55Hz when I isolated the code for
+            quaternion calculation. It is also important to note that the
+            gyroscope, which is incorporated into the DMP calculations, can
+            detect a maximum of ±2000 degrees per second according to the
+            documentation. In this application, the car rotates at less than
+            2000 dps, so the sensor is sufficient for our purposes.
           </p>
         </div>
         <div class="image-section">
           <img
-            src="resources/images/5PIDLoop.png"
+            src="resources/images/6HzCode.png"
             alt="Lab 1 Detailed Analysis"
           />
         </div>
         <div class="image-section">
           <img
-            src="resources/images/5LinExt.png"
+            src="resources/images/6HzOutput.png"
             alt="Lab 1 Detailed Analysis"
           />
         </div>
-        <div class="text-section">
-          <p>
-            With these optimizations, the PID loop ran roughly 12 times faster
-            than the ToF sensors returned data.
-          </p>
+        <div class="image-section">
+          <img
+            src="resources/images/6quatCode.png"
+            alt="Lab 1 Detailed Analysis"
+          />
         </div>
       </section>
       <section class="section">
-        <h2 class="section-header">Section 2: Designing PID</h2>
+        <h2 class="section-header">Section 2: Designing the PID Controller</h2>
         <div class="text-section">
           <p>
-            Once the framework for the PID controller was built, it was time to
-            design the controller itself. The first step was calculating
-            reasonable Kp values for proportional control. The motor runs on
-            duty cycles between 0 and 255 and the distance from the ToF sensors
-            is measured in mm. Since we don’t want to run the motors at full
-            power for energy conservation and we don’t want the car to be in its
-            deadband range, the useable PWM values were 40 to 180. While the
-            maximum PWM signal is hard coded into the motor code, the minimum is
-            added to the PID control signal, giving this equation: input = Kp *
-            error + minInput. Assuming that the motor should not be at maximum
-            speed within 1000mm of its target position, the maximum Kp value is
-            (180 - 40)/1000 = 0.14. Meanwhile, assuming the motor should be
-            moving at an arbitrary PWM of 41 within 100mm of the target
-            position, the minimum Kp value is (41-40)/100 = 0.01. With
-            reasonable values for Kp established, the Ziegler-Nichols method was
-            used to calculate reasonable Kp, Ki, and Kd and then they were
-            fine-tuned to final values of Kp = 0.02, Ki = 0.001, Kd = 0.2.
-            Beyond designing a standard PID controller, a few extra “hacks” were
-            implemented to improve performance. The most active one was using
-            active breaking to stop that car whenever it was within 20mm of the
-            target distance. This prevents oscillations around the goal and
-            allows for fast settling time.
+            The main structure of the orientation PID controller was similar to
+            the positional PID controller. Like the positional controller, the
+            sensor data and PID loop were decoupled and the orientation was
+            linearly extrapolated when the sensors did not have data. I also
+            applied a minimum input to prevent a deadband region. Unlike
+            positional control, I had to handle for wrapping values in angular
+            control that would always move the car in the most efficient
+            direction. This was done using a series of fmod functions. Improving
+            on the previous design, I designed a damper that would cause the car
+            to break with varying strength depending on the angular velocity and
+            error. I then designed a low pass filter for the derivative term to
+            avoid spikes in the input from derivative kick. Finally, I used
+            Ziegler-Nichols to tune the PID parameters. After initial tuning and
+            readjustment, I settled on Kp = 0.6, Ki = 0, and Kd = 0.02.
           </p>
         </div>
         <div class="image-section">
-          <img src="resources/images/5PID.png" alt="Lab 1 Detailed Analysis" />
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Section 3: Running PID</h2>
-        <div class="text-section">
-          <p>
-            Finally, with all the values calculated, it was time to test the
-            robustness of the PID controller. The goal was to have the car move
-            on multiple surfaces and avoid crashing into walls. To analyze the
-            performance of the PID controller, the maximum linear speed was
-            calculated to be 1.1m/s, and distance vs. time and input vs. time
-            were plotted.
-          </p>
+          <img
+            src="resources/images/6loopCode.png"
+            alt="Lab 1 Detailed Analysis"
+          />
         </div>
         <div class="video-container">
           <iframe
             width="315"
             height="515"
-            src="https://www.youtube.com/embed/2jQ5cXy-FHk"
+            src="https://www.youtube.com/embed/sEd4HYi2b5E"
             title="YouTube video player"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -273,35 +232,50 @@
           <iframe
             width="315"
             height="515"
-            src="https://www.youtube.com/embed/wZi84pDeVBI"
+            src="https://www.youtube.com/embed/ZnMGYLfGhQk"
             title="YouTube video player"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
           ></iframe>
         </div>
-        <div class="video-container">
-          <iframe
-            width="315"
-            height="515"
-            src="https://www.youtube.com/embed/J4A7ng2DjxY"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 3: Optimizing the Code</h2>
+        <div class="text-section">
+          <p>
+            To optimize and improve the code, I implemented the PID loop such
+            that I could adjust the gains while the robot is running. This was
+            done by using the loop() function in Arduino as the main loop that
+            runs PID, and controlling everything through flags. This would allow
+            the write_data() and read_data() functions to run in parallel with
+            the PID loops. This is especially important for future applications
+            where parameters need to be changed during navigation and stunts. To
+            test the performance of the car, I plotted the angular position vs
+            time and the input vs time. I have not tried combining the
+            positional control and orientation control, but in the future this
+            should not be to difficult. One consideration is orientation during
+            backwards and forwards motion, which can be handled with flags that
+            revers the input to the motors.
+          </p>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/6liveUpdate.png"
+            alt="Lab 1 Detailed Analysis"
+          />
         </div>
         <div class="content-wrapper">
           <div class="content">
             <div class="image-section">
               <img
-                src="resources/images/5tvdist.png"
+                src="resources/images/6angleGraph.png"
                 alt="Lab 1 Detailed Analysis"
               />
             </div>
             <div class="image-section">
               <img
-                src="resources/images/5tvinp.png"
+                src="resources/images/6inputGraph.png"
                 alt="Lab 1 Detailed Analysis"
               />
             </div>
