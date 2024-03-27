@@ -208,7 +208,14 @@
             error. I then designed a low pass filter for the derivative term to
             avoid spikes in the input from derivative kick. Finally, I used
             Ziegler-Nichols to tune the PID parameters. After initial tuning and
-            readjustment, I settled on Kp = 0.6, Ki = 0, and Kd = 0.02.
+            readjustment, I settled on Kp = 0.6, Ki = 0, and Kd = 0.02. The Kp
+            term was just enough to quickly return to the car to its original
+            position without overshooting too much. Meanwhile, the Kd term
+            prevented the car from accellerating too much if it was far away
+            from its target, smoothening out the control. I tried playing around
+            with Ki values, but they didn't improve performance by much and
+            often caused small oscillations around the target angle due to the
+            imprecisions of the IMU that were undesirable.
           </p>
         </div>
         <div class="image-section">
