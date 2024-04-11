@@ -69,8 +69,8 @@
         max-height: 450px;
       }
       .large-image {
-        width: 30%; /* Makes the image take up the full width of its container */
-        height: auto; /* Keeps the image's aspect ratio */
+        max-width: 30%; /* Makes the image take up the full width of its container */
+        max-height: 30%; /* Keeps the image's aspect ratio */
         display: block; /* Removes any default inline styling */
         margin: 20px auto; /* Centers the image horizontally */
       }
@@ -110,202 +110,141 @@
         </ul>
       </nav>
     </header>
-    <h1 id="main-title">Lab 5</h1>
+    <h1 id="main-title">Lab 7</h1>
     <img
-      src="resources/images/5title.png"
+      src="resources/images/7title.png"
       alt="Descriptive Alt Text"
       class="large-image"
     />
     <main>
       <section class="section">
-        <h2 class="section-header">Overview of Lab 5</h2>
+        <h2 class="section-header">Overview of Lab 7</h2>
         <div class="text-section">
           <p>
-            The goal of lab 5 was to design and implement a positional PID
-            controller for the RC car. Using any combination of proportional,
-            integral, and derivative control, the car should be able to go to
-            any position 2-4 meters away from a wall. The car should also be
-            able to achieve positional control on different surfaces without
-            difficulty.
-          </p>
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Prelab</h2>
-        <div class="text-section">
-          <p>
-            Before starting the lab, the system for sending data over Bluetooth
-            was established. The following commands were created to execute
-            actions on the Artemis.
-          </p>
-        </div>
-        <div class="image-section">
-          <img
-            src="resources/images/5cmndTypes.png"
-            alt="Lab 1 Detailed Analysis"
-          />
-        </div>
-        <div class="text-section">
-          <p>
-            To analyze the performance or failure of the RC car, developing a
-            debug command was particularly important. The debug command requests
-            data from the Artemis to later be processed in Python. The command
-            takes in a data type and quantity and returns the requested amount
-            of time-stamped data. On the Artemis side, the data arrays are
-            populated every time the PID controller runs. Once the data is in
-            Python, it can be analyzed separately.
-          </p>
-        </div>
-        <div class="image-section">
-          <img
-            src="resources/images/5debugCatch.png"
-            alt="Lab 1 Detailed Analysis"
-          />
-        </div>
-        <div class="image-section">
-          <img
-            src="resources/images/5populateArray.png"
-            alt="Lab 1 Detailed Analysis"
-          />
-        </div>
-        <div class="image-section">
-          <img
-            src="resources/images/5pythonDebug.png"
-            alt="Lab 1 Detailed Analysis"
-          />
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Section 1: Optimizing Sampling</h2>
-        <div class="text-section">
-          <p>
-            To create a usable PID controller, it is necessary to optimize the
-            sampling rate of the time of flight sensors and decouple the PID
-            loop from the sensors. One possible solution to increasing the
-            sampling rate of the ToF sensors is to lower their accuracy and
-            remove any delays or print statements in the loop. However, even
-            with optimization, the maximum refresh rate of the sensors is 50Hz.
-            To increase the rate that the PID loop runs, the sensors and PID
-            were decoupled from each other. Instead of waiting for the sensors
-            to be ready before continuing to run PID, the PID was run every loop
-            cycle and the sensors only returned data when they were ready. Using
-            this method, the PID loop ran much faster than the ToF sensors
-            gathered data, allowing for more processing. To provide accurate
-            data to the PID loop, the distance from the wall was linearly
-            extrapolated between sensor measurements.
-          </p>
-        </div>
-        <div class="image-section">
-          <img
-            src="resources/images/5PIDLoop.png"
-            alt="Lab 1 Detailed Analysis"
-          />
-        </div>
-        <div class="image-section">
-          <img
-            src="resources/images/5LinExt.png"
-            alt="Lab 1 Detailed Analysis"
-          />
-        </div>
-        <div class="text-section">
-          <p>
-            With these optimizations, the PID loop ran roughly 12 times faster
-            than the ToF sensors returned data.
-          </p>
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Section 2: Designing PID</h2>
-        <div class="text-section">
-          <p>
-            Once the framework for the PID controller was built, it was time to
-            design the controller itself. The first step was calculating
-            reasonable Kp values for proportional control. The motor runs on
-            duty cycles between 0 and 255 and the distance from the ToF sensors
-            is measured in mm. Since we don’t want to run the motors at full
-            power for energy conservation and we don’t want the car to be in its
-            deadband range, the useable PWM values were 40 to 180. While the
-            maximum PWM signal is hard coded into the motor code, the minimum is
-            added to the PID control signal, giving this equation: input = Kp *
-            error + minInput. Assuming that the motor should not be at maximum
-            speed within 1000mm of its target position, the maximum Kp value is
-            (180 - 40)/1000 = 0.14. Meanwhile, assuming the motor should be
-            moving at an arbitrary PWM of 41 within 100mm of the target
-            position, the minimum Kp value is (41-40)/100 = 0.01. With
-            reasonable values for Kp established, the Ziegler-Nichols method was
-            used to calculate reasonable Kp, Ki, and Kd and then they were
-            fine-tuned to final values of Kp = 0.02, Ki = 0.001, Kd = 0.2.
-            Beyond designing a standard PID controller, a few extra “hacks” were
-            implemented to improve performance. The most active one was using
-            active breaking to stop that car whenever it was within 20mm of the
-            target distance. This prevents oscillations around the goal and
-            allows for fast settling time.
-          </p>
-        </div>
-        <div class="image-section">
-          <img src="resources/images/5PID.png" alt="Lab 1 Detailed Analysis" />
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Section 3: Running PID</h2>
-        <div class="text-section">
-          <p>
-            Finally, with all the values calculated, it was time to test the
-            robustness of the PID controller. The goal was to have the car move
-            on multiple surfaces and avoid crashing into walls. To analyze the
-            performance of the PID controller, the maximum linear speed was
-            calculated to be 1.1m/s, and distance vs. time and input vs. time
-            were plotted.
+            The goal of this lab was to develop a Kalman filter to estimate the
+            position of the RC car using the dynamics and sensor data of the
+            car. Kalman filters are a form of Bayesian filters that approximate
+            noise using Gaussian distributions. With the RC car, the Kalman
+            filter is particularly useful because it can be used to predict the
+            position of the car at a higher frequency than what the sensors can
+            provide.
           </p>
         </div>
         <div class="video-container">
           <iframe
             width="315"
             height="515"
-            src="https://www.youtube.com/embed/2jQ5cXy-FHk"
+            src="https://www.youtube.com/embed/BBE_Xwe5Rx8"
             title="YouTube video player"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
           ></iframe>
         </div>
-        <div class="video-container">
-          <iframe
-            width="315"
-            height="515"
-            src="https://www.youtube.com/embed/wZi84pDeVBI"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 1: Setup</h2>
+        <div class="text-section">
+          <p>
+            To create the Kalman filter, the first step was to choose an input u
+            that will be used to estimate the drag and mass terms in the A and B
+            matrix for the state space model. Since u is expressed as a PWM
+            signal, the maximum u is 255. However, because the sensor can only
+            read a maximum of 4m, it is difficult to reach steady state velocity
+            with an input of 255. Additionally, the maximum speed I will likely
+            run the motors at is 80% capacity, so I chose a u of 204 which is
+            80% of 255. With this control input, I ran the car at a wall until
+            it reached steady-state velocity. By breaking right before the wall
+            I was able to prevent any damage to the car.
+          </p>
         </div>
-        <div class="video-container">
-          <iframe
-            width="315"
-            height="515"
-            src="https://www.youtube.com/embed/J4A7ng2DjxY"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 2: Data</h2>
+        <div class="text-section">
+          <p>
+            By using the ToF sensors on the RC car as it ran at the wall, it was
+            possible to identify the maximum velocity of the car and the 90%
+            rise time. The maximum velocity of the car was 2.24m/s and the 90%
+            rise time was 1.49s.
+          </p>
         </div>
-        <div class="content-wrapper">
-          <div class="content">
-            <div class="image-section">
-              <img
-                src="resources/images/5tvdist.png"
-                alt="Lab 1 Detailed Analysis"
-              />
-            </div>
-            <div class="image-section">
-              <img
-                src="resources/images/5tvinp.png"
-                alt="Lab 1 Detailed Analysis"
-              />
-            </div>
-          </div>
+        <div class="image-section">
+          <img src="resources/images/7dist.png" alt="Lab 1 Detailed Analysis" />
+        </div>
+        <div class="image-section">
+          <img src="resources/images/7vel.png" alt="Lab 1 Detailed Analysis" />
+        </div>
+        <div class="image-section">
+          <img src="resources/images/7inp.png" alt="Lab 1 Detailed Analysis" />
+        </div>
+        <div class="text-section">
+          <p>
+            Using this information, the drag and mass parameters were calculated
+            to be 0.36 and 0.23 and the state space model was constructed.
+            Because the distance measured is the negative distance of the actual
+            car, the C matrix was given as [-1, 0].
+          </p>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/7sigmas.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/7state.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 3: Kalman Filter</h2>
+        <div class="text-section">
+          <p>
+            Finally, a Kalman filter was constructed. The Kalman filter takes
+            the state space model and the sensor readings and extrapolates the
+            expected location of the car. Since the sensors and dynamics model
+            have different levels of noise, each is assigned a sigma value that
+            corresponds to the standard deviation of their noise. These values
+            were assigned using an educated guess. The process noise sigma value
+            was assigned as 10mm for position and 10mm/s for velocity. The
+            measurement noise sigma was assigned as 20mm. The smaller these
+            sigma values, the more the Kalman filter trusts the corresponding
+            models. So, in this case, the process model is favored slightly over
+            the sensor model. Using the three sigma values, a covariance matrix
+            for both the dynamics model and sensor model was calculated.
+            Finally, the Kalman filter was implemented using the two different
+            models.
+          </p>
+        </div>
+        <div class="image-section">
+          <img src="resources/images/7code.png" alt="Lab 1 Detailed Analysis" />
+        </div>
+        <div class="text-section">
+          <p>
+            First, the position of the car was estimated at the same frequency
+            as the sensor data. While the Kalman filter provided a similar
+            result as the sensor data, it smoothed out some inconsistencies.
+            Later, the position of the car was calculated at a higher frequency
+            than the ToF sensor. In this case, the Kalman filter extrapolated
+            the position using only the process model when the measurement model
+            was unavailable. Although the Kalman filter seemed to work
+            correctly, the process model itself seemed to have some issues and
+            the predicted position of the car was thrown off by the incorrect
+            model. However, with every sensor reading the Kalman filter
+            corrected itself.
+          </p>
+        </div>
+        <div class="image-section">
+          <img src="resources/images/7kalm.png" alt="Lab 1 Detailed Analysis" />
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/7kalman.png"
+            alt="Lab 1 Detailed Analysis"
+          />
         </div>
       </section>
     </main>
