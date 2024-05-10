@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 4 - Fast Robots</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 18px;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      header {
+        background-color: #333;
+        color: white;
+        padding: 10px 20px;
+      }
+      #main-title {
+        text-align: center;
+        margin-top: 40px; /* Adjust the top margin as needed */
+      }
+      nav ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      nav ul li {
+        display: inline;
+        margin-right: 20px;
+      }
+      nav ul li a {
+        color: white;
+        text-decoration: none;
+      }
+      .section {
+        margin: 20px;
+        text-align: center;
+      }
+      .section-header {
+        font-size: 30px;
+        margin-bottom: 10px;
+        margin-top: 60px;
+        text-align: center;
+      }
+      .content {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+      }
+      .content-wrapper {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically if you want */
+        width: 100%; /* Take the full width to center content within it */
+        height: 100%; /* Optional: if you want to ensure vertical centering in the entire viewport or a specific height */
+      }
+      .text-section p {
+        margin-left: 30%;
+        margin-right: 30%;
+        text-align: justify;
+      }
+      .image-section {
+        margin-top: 20px; /* Adjusts space between text and image */
+      }
+      .image-section img {
+        max-width: 600px; /* Adjust based on your preference */
+        max-height: 450px;
+      }
+      .large-image {
+        max-width: 25%; /* Makes the image take up the full width of its container */
+        max-height: 25%; /* Keeps the image's aspect ratio */
+        display: block; /* Removes any default inline styling */
+        margin: 20px auto; /* Centers the image horizontally */
+      }
+      @media (max-width: 768px) {
+        .content {
+          flex-direction: column;
+        }
+        .image-section img {
+          width: 100%;
+        }
+      }
+      .video-container {
+        position: relative;
+        overflow: hidden;
+        /* Adjust the padding-top value if necessary or remove it if setting iframe size directly */
+        padding-top: 30%; /* Maintain aspect ratio for 16:9 videos */
+        margin: auto; /* Center the video container */
+        max-width: 300px; /* Maximum width of the video */
+      }
+
+      .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%; /* Fill the entire container */
+        height: 100%; /* Fill the entire container */
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="FastRobots_2024.html">Fast Robots</a></li>
+        </ul>
+      </nav>
+    </header>
+    <h1 id="main-title">Lab 9</h1>
+    <img
+      src="resources/images/9title.png"
+      alt="Descriptive Alt Text"
+      class="large-image"
+    />
+    <main>
+      <section class="section">
+        <h2 class="section-header">Overview of Lab 9</h2>
+        <div class="text-section">
+          <p>
+            The purpose of this lab was to detect the surrounding space of the
+            robot using the ToF distance sensor and generate a map using data
+            collected from multiple locations. As a setup for this lab, a course
+            was constructed in the engineering building at Cornell, and the
+            robot was tasked with mapping the surrounding space.
+          </p>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 1: Gathering data</h2>
+        <div class="text-section">
+          <p>
+            The selected method for capturing the data around the car was to use
+            orientation control to move the robot by increments of 24º and
+            measure the distance to any objects at each orientation. This was
+            accomplished by using the orientation PID controller that integrates
+            multiple sensors on the IMU through DMP. The front-mounted ToF
+            sensor was used to gather 20 data points, corresponding to the
+            distances to objects in front of the car. Averaging these data
+            points provided a rough estimate of where the walls are. Although
+            averaging the data improves the quality of the constructed map, it
+            does have some limitations since the captured data does not actually
+            follow a Gaussian distribution. Instead comparing the data to a more
+            accurate distribution would lead to more accurate results.
+          </p>
+        </div>
+        <div class="video-container">
+          <iframe
+            width="315"
+            height="515"
+            src="https://www.youtube.com/embed/UT8zhy9LwN"
+            title="Rotating RC Car"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 2: Processing data</h2>
+        <div class="text-section">
+          <p>
+            The collected data –capturing the time of measurement, angle of the
+            car, position of the car, and distance to objects– was gathered in a
+            .csv file. The data was then post-processed by taking the average of
+            the distance measurements at a given angle and plotted in a polar
+            coordinate system. Then, the data from each measurement was
+            multiplied by a rotation matrix to convert it from the robot
+            reference frame to the global frame and plotted in cartesian
+            coordinates. The rotation matrix combined a simple rotation and
+            translation. To confirm that the plot was correct the cartesian plot
+            and polar plot were compared.
+          </p>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/9rotation.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="content-wrapper">
+          <div class="content">
+            <div class="image-section">
+              <img
+                src="resources/images/9polar.png"
+                alt="Lab 1 Detailed
+              Analysis"
+              />
+            </div>
+            <div class="image-section">
+              <img
+                src="resources/images/9cart.png"
+                alt="Lab 1 Detailed Analysis"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="text-section">
+          <p>
+            Using DMP for rotational PID control greatly improved the accuracy
+            of the measured angle compared to using the gyroscope in isolation.
+            The maximum error of the DMP was found to be about 5 degrees. Since
+            the DMP uses the magnetometer on the IMU, drift was negligible over
+            the period that the robot was rotating. Most of the errors in the
+            mapping came from distance sensors. As a baseline of robot accuracy,
+            the maximum error of measurements was calculated for a 4x4 meter
+            square room. With an error in the angle of 5 degrees and a ToF error
+            of up to 0.5m, the maximum error was given as:
+          </p>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/9error.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="text-section">
+          <p>
+            Meanwhile, the average error of any given point was 0, because the
+            error was symmetrical around the true point, assuming a Gaussian
+            distribution.
+          </p>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 3: Map Generation</h2>
+        <div class="text-section">
+          <p>
+            Once all the data was gathered and processed, multiple readings were
+            aggregated and a map was generated. For visibility, points gathered
+            from different readings were color-coded. Finally, a collection of
+            endpoints was used to draw any walls estimated by the sensors.
+          </p>
+        </div>
+        <div class="image-section">
+          <img src="resources/images/9map.png" alt="Lab 1 Detailed Analysis" />
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

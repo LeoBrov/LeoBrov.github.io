@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 4 - Fast Robots</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 18px;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      header {
+        background-color: #333;
+        color: white;
+        padding: 10px 20px;
+      }
+      #main-title {
+        text-align: center;
+        margin-top: 40px; /* Adjust the top margin as needed */
+      }
+      nav ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      nav ul li {
+        display: inline;
+        margin-right: 20px;
+      }
+      nav ul li a {
+        color: white;
+        text-decoration: none;
+      }
+      .section {
+        margin: 20px;
+        text-align: center;
+      }
+      .section-header {
+        font-size: 30px;
+        margin-bottom: 10px;
+        margin-top: 60px;
+        text-align: center;
+      }
+      .content {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+      }
+      .content-wrapper {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically if you want */
+        width: 100%; /* Take the full width to center content within it */
+        height: 100%; /* Optional: if you want to ensure vertical centering in the entire viewport or a specific height */
+      }
+      .text-section p {
+        margin-left: 30%;
+        margin-right: 30%;
+        text-align: justify;
+      }
+      .image-section {
+        margin-top: 20px; /* Adjusts space between text and image */
+      }
+      .image-section img {
+        max-width: 600px; /* Adjust based on your preference */
+        max-height: 450px;
+      }
+      .large-image {
+        max-width: 25%; /* Makes the image take up the full width of its container */
+        max-height: 25%; /* Keeps the image's aspect ratio */
+        display: block; /* Removes any default inline styling */
+        margin: 20px auto; /* Centers the image horizontally */
+      }
+      @media (max-width: 768px) {
+        .content {
+          flex-direction: column;
+        }
+        .image-section img {
+          width: 100%;
+        }
+      }
+      .video-container {
+        position: relative;
+        overflow: hidden;
+        /* Adjust the padding-top value if necessary or remove it if setting iframe size directly */
+        padding-top: 30%; /* Maintain aspect ratio for 16:9 videos */
+        margin: auto; /* Center the video container */
+        max-width: 300px; /* Maximum width of the video */
+      }
+
+      .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%; /* Fill the entire container */
+        height: 100%; /* Fill the entire container */
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="FastRobots_2024.html">Fast Robots</a></li>
+        </ul>
+      </nav>
+    </header>
+    <h1 id="main-title">Lab 8</h1>
+    <img
+      src="resources/images/8title.png"
+      alt="Descriptive Alt Text"
+      class="large-image"
+    />
+    <main>
+      <section class="section">
+        <h2 class="section-header">Overview of Lab 8</h2>
+        <div class="text-section">
+          <p>
+            The goal of this lab was to have the RC car do a stunt using the
+            controllers developed for the car. Using a combination of the linear
+            and rotational PID controller, the RC car was programmed to do a
+            small drift and return back to its original position.
+          </p>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 1: Programming</h2>
+        <div class="text-section">
+          <p>
+            In my implementation, I combined previous code into a single command
+            that runs the car forward until it is a certain distance from the
+            wall, then runs the rotation PID control to rotate 180 degrees, and
+            finally drive back forward for a few seconds. Keeping commands from
+            previous labs, I was able to adjust the PID control parameters to
+            get the gains to rotate the car. By putting duct tape on the wheels,
+            I also improved the car's ability to drift on the ground. I also
+            needed to slightly modify the rotation PID controller to shut off
+            when a successful condition was reached. In this case, I had it shut
+            off when the angle of the car reached a desired goal angle.
+          </p>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/8StuntCode.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 2: Data</h2>
+        <div class="text-section">
+          <p>
+            Although in theory the rotational PID controller should be able to
+            get the car to the desired position, the sliding of the car caused a
+            lot of overshoot. However, if I tuned the parameters to remove
+            overshoot, the car would rotate very slowly. To combat this, I set
+            the goal angle to be slightly lower than 180 degrees, closer to 100,
+            such that the rest of the rotation would be completed by drift.
+            Although a Kalman filter could also achieve the same results, I
+            struggled to implement it, so I chose the more brute force approach.
+            Taking measurements from the distance sensor showed that the car
+            accurately drove until it reached 1 meter from the wall, and then
+            rotated.
+          </p>
+        </div>
+        <div class="video-container">
+          <iframe
+            width="315"
+            height="515"
+            src="https://www.youtube.com/embed/UT8zhy9LwNQ"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/8DistanceMes.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
