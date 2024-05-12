@@ -88,7 +88,7 @@
         /* Adjust the padding-top value if necessary or remove it if setting iframe size directly */
         padding-top: 30%; /* Maintain aspect ratio for 16:9 videos */
         margin: auto; /* Center the video container */
-        max-width: 300px; /* Maximum width of the video */
+        max-width: 700px; /* Maximum width of the video */
       }
 
       .video-container iframe {
@@ -110,7 +110,7 @@
         </ul>
       </nav>
     </header>
-    <h1 id="main-title">Lab 8</h1>
+    <h1 id="main-title">Lab 10</h1>
     <img
       src="resources/images/8title.png"
       alt="Descriptive Alt Text"
@@ -118,13 +118,32 @@
     />
     <main>
       <section class="section">
-        <h2 class="section-header">Overview of Lab 8</h2>
+        <h2 class="section-header">Overview of Lab 10</h2>
         <div class="text-section">
           <p>
-            The goal of this lab was to have the RC car do a stunt using the
-            controllers developed for the car. Using a combination of the linear
-            and rotational PID controller, the RC car was programmed to do a
-            small drift and return back to its original position.
+            The goal of this lab was to implement a grid localization algorithm
+            using a Bayes filter in a simulated environment. A package was
+            provided to model the RC car and the surrounding map. While
+            localization can be implemented by directly referencing sensor data,
+            a Bayes filter combines sensor data with a prior in the form of a
+            motion model. This allows the localization of the robot to be robust
+            against sensor noise or inaccuracies in the motion model.
+          </p>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/10pseudo.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="text-section">
+          <p>
+            The Bayes filter calculates the probability that the robot is
+            located in any given location. To prevent infinite computation
+            requirements, the localization algorithm usually examines
+            discretized locations. In this lab, the states of the robot were
+            discretized into a grid with 0.3048 meter squares, and an
+            orientation resolution of 20 degrees.
           </p>
         </div>
       </section>
@@ -132,58 +151,83 @@
         <h2 class="section-header">Section 1: Programming</h2>
         <div class="text-section">
           <p>
-            In my implementation, I combined previous code into a single command
-            that runs the car forward until it is a certain distance from the
-            wall, then runs the rotation PID control to rotate 180 degrees, and
-            finally drive back forward for a few seconds. Keeping commands from
-            previous labs, I was able to adjust the PID control parameters to
-            get the gains to rotate the car. By putting duct tape on the wheels,
-            I also improved the car's ability to drift on the ground. I also
-            needed to slightly modify the rotation PID controller to shut off
-            when a successful condition was reached. In this case, I had it shut
-            off when the angle of the car reached a desired goal angle.
+            The Bayes filter is broken up into a prediction step and an update
+            step. The prediction step uses the control input and the prior
+            location of the robot to estimate a probability distribution that
+            the robot is in any given location. The control information is
+            broken down into an angle change, a forward movement, and another
+            angle change. Then, the odometry model generates a Gaussian
+            distribution around the predicted location of the robot to predict
+            where it could be. Finally, we update the belief that the robot is
+            in any given state through the prediction step. To avoid large
+            compute times, any values with a belief less than 0.0001 are
+            ignored.
           </p>
         </div>
         <div class="image-section">
           <img
-            src="resources/images/8StuntCode.png"
+            src="resources/images/10code1.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/10code2.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/10code3.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="text-section">
+          <p>
+            The update step is completed by rotating the robot and taking sensor
+            measurements and discrete increments. Then, the sensor measurements
+            are used to generate a probability that the robot is in any given
+            location on the map, and this belief is integrated with the
+            prediction step.
+          </p>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/10code4.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/10code5.png"
             alt="Lab 1 Detailed Analysis"
           />
         </div>
       </section>
       <section class="section">
-        <h2 class="section-header">Section 2: Data</h2>
+        <h2 class="section-header">Section 2: Running the algorithm</h2>
         <div class="text-section">
           <p>
-            Although in theory the rotational PID controller should be able to
-            get the car to the desired position, the sliding of the car caused a
-            lot of overshoot. However, if I tuned the parameters to remove
-            overshoot, the car would rotate very slowly. To combat this, I set
-            the goal angle to be slightly lower than 180 degrees, closer to 100,
-            such that the rest of the rotation would be completed by drift.
-            Although a Kalman filter could also achieve the same results, I
-            struggled to implement it, so I chose the more brute force approach.
-            Taking measurements from the distance sensor showed that the car
-            accurately drove until it reached 1 meter from the wall, and then
-            rotated.
+            In the simulator, the algorithm is run. The robot moves around the
+            map, and the predicted location of the robot is updates as it moves.
+            The red in the simulator corresponds to the information generated by
+            the odometry model. Meanwhile, the gread corresponds to the ground
+            truth and the blue line corresponds to the robot’s belief. Since the
+            robot’s ground truth and belief remain consistent after multiple
+            iterations of running the simulator, the Bayes filter seems to be
+            accurate in its localization.
           </p>
         </div>
         <div class="video-container">
           <iframe
             width="315"
             height="515"
-            src="https://www.youtube.com/embed/UT8zhy9LwNQ"
+            src="https://www.youtube.com/embed/leIgT7icAfk"
             title="YouTube video player"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
           ></iframe>
-        </div>
-        <div class="image-section">
-          <img
-            src="resources/images/8DistanceMes.png"
-            alt="Lab 1 Detailed Analysis"
-          />
         </div>
       </section>
     </main>
