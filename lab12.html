@@ -110,43 +110,45 @@
         </ul>
       </nav>
     </header>
-    <h1 id="main-title">Lab 8</h1>
+    <h1 id="main-title">Lab 12</h1>
     <img
-      src="resources/images/8title.png"
+      src="resources/images/12title.png"
       alt="Descriptive Alt Text"
       class="large-image"
     />
     <main>
       <section class="section">
-        <h2 class="section-header">Overview of Lab 8</h2>
+        <h2 class="section-header">Overview of Lab 12</h2>
         <div class="text-section">
           <p>
-            The goal of this lab was to have the RC car do a stunt using the
-            controllers developed for the car. Using a combination of the linear
-            and rotational PID controller, the RC car was programmed to do a
-            small drift and return back to its original position.
+            The goal of this lab was to implement a balancing algorithm similar
+            to an inverted pendulum to keep the RC car balanced on two wheels.
+            While there are multiple methods to implement a balancing algorithm,
+            including developing state-space methods such as using an LQR
+            controller, I chose to take a simpler approach using a modified PID
+            controller acting on a physics model that I developed. Over time,
+            the method for controlling the system was adapted to improve
+            performance. However, hardware limitations prevented a highly robust
+            controller from being developed.
           </p>
         </div>
       </section>
       <section class="section">
-        <h2 class="section-header">Section 1: Programming</h2>
+        <h2 class="section-header">Section 1: Building the Model</h2>
         <div class="text-section">
           <p>
-            In my implementation, I combined previous code into a single command
-            that runs the car forward until it is a certain distance from the
-            wall, then runs the rotation PID control to rotate 180 degrees, and
-            finally drive back forward for a few seconds. Keeping commands from
-            previous labs, I was able to adjust the PID control parameters to
-            get the gains to rotate the car. By putting duct tape on the wheels,
-            I also improved the car's ability to drift on the ground. I also
-            needed to slightly modify the rotation PID controller to shut off
-            when a successful condition was reached. In this case, I had it shut
-            off when the angle of the car reached a desired goal angle.
+            As an initial approach, I drew a simple free-body diagram to examine
+            the forces acting on the car as it balances on two wheels,
+            particularly focusing on anything that causes torque around the
+            center of mass of the car. The forces identified were the force of
+            gravity, normal force, and torque exerted by the controller. Rather
+            than focusing on restorative control, I initially focused on simply
+            keeping the torque equal to 0.
           </p>
         </div>
         <div class="image-section">
           <img
-            src="resources/images/8StuntCode.png"
+            src="resources/images/12math.png"
             alt="Lab 1 Detailed Analysis"
           />
         </div>
@@ -172,7 +174,7 @@
           <iframe
             width="315"
             height="515"
-            src="https://www.youtube.com/embed/UT8zhy9LwNQ"
+            src="https://www.youtube.com/embed/uSXPyqfG5_I"
             title="YouTube video player"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -181,7 +183,7 @@
         </div>
         <div class="image-section">
           <img
-            src="resources/images/8DistanceMes.png"
+            src="resources/images/12graph.png"
             alt="Lab 1 Detailed Analysis"
           />
         </div>
