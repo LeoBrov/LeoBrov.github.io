@@ -126,8 +126,8 @@
             While there are multiple methods to implement a balancing algorithm,
             including developing state-space methods such as using an LQR
             controller, I chose to take a simpler approach using a modified PID
-            controller acting on a physics model that I developed. Over time,
-            the method for controlling the system was adapted to improve
+            controller based on a physics model that I developed. Over time, the
+            method for controlling the system was adapted to improve
             performance. However, hardware limitations prevented a highly robust
             controller from being developed.
           </p>
@@ -141,9 +141,12 @@
             the forces acting on the car as it balances on two wheels,
             particularly focusing on anything that causes torque around the
             center of mass of the car. The forces identified were the force of
-            gravity, normal force, and torque exerted by the controller. Rather
+            gravity, normal force, and force exerted by the controller. Rather
             than focusing on restorative control, I initially focused on simply
-            keeping the torque equal to 0.
+            keeping the torque equal to 0. To do this, I tried to find a
+            coefficient that would keep the car at roughly whatever initial
+            angle it was started at. After that, I started adding an additional
+            PID controller to create a restorative force.
           </p>
         </div>
         <div class="image-section">
@@ -152,22 +155,77 @@
             alt="Lab 1 Detailed Analysis"
           />
         </div>
-      </section>
-      <section class="section">
-        <h2 class="section-header">Section 2: Data</h2>
         <div class="text-section">
           <p>
-            Although in theory the rotational PID controller should be able to
-            get the car to the desired position, the sliding of the car caused a
-            lot of overshoot. However, if I tuned the parameters to remove
-            overshoot, the car would rotate very slowly. To combat this, I set
-            the goal angle to be slightly lower than 180 degrees, closer to 100,
-            such that the rest of the rotation would be completed by drift.
-            Although a Kalman filter could also achieve the same results, I
-            struggled to implement it, so I chose the more brute force approach.
-            Taking measurements from the distance sensor showed that the car
-            accurately drove until it reached 1 meter from the wall, and then
-            rotated.
+            Since the force that the wheels need to exert scales with the
+            tangent of angle, the input force becomes, quite reasonably,
+            infinite as the car falls flat. The inputted PWM also isn’t
+            proportional to force but velocity, so the PWM would have to
+            increase exponentially to keep the car at a non-zero angle. This
+            introduced a problem where the torque on the wheels was limited by
+            what the motors would provide. Luckily, the goal is to balance
+            around a vertical position, so as long as the car remains within a
+            range of the goal angle, the maximum PWM should never be reached.
+          </p>
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 2: Writing the Code</h2>
+        <div class="text-section">
+          <p>
+            To implement the controller, I used a similar method to orientation
+            control in lab 6. However, to optimize for computation, I isolated
+            the code such that it would not listen for bluetooth signals. The
+            key to being able to complete the inverted pendulum problem was
+            using DMP, which provided much more accurate pitch data than using
+            just the accelerometers. This allowed me to balance around a
+            relatively consistent angle. However, even with DMP, the angle would
+            shift slightly, so I implemented a command that would allow me to
+            make slight correct to the angle that the robot is balancing around.
+          </p>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/12code1.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+        <div class="text-section">
+          <p>
+            For the PID control, I initially decided to write a controller
+            proportional directly to the pitch of the car, instead of the
+            tangent. Since, at small angles, the response should be linear, this
+            should work. However, later, I switched to having the controller
+            proportional to the tangent of the pitch, since the linear
+            controller would not work well when there were large oscillations.
+            After finding a Kp term that just barely avoided oscillations, I
+            tried running the system but found that the car would fall over too
+            easily. Therefore, I eventually added a derivative controller
+            designed to prevent the car from falling in any direction. I tuned
+            the Kd term to just barely reach the vertical position after
+            recovering from a 20-degree lean. My final Kp and Kd values were 600
+            and 0.3 respectively.
+          </p>
+        </div>
+        <div class="image-section">
+          <img
+            src="resources/images/12code2.png"
+            alt="Lab 1 Detailed Analysis"
+          />
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 3: Testing and Tuning</h2>
+        <div class="text-section">
+          <p>
+            In the simulator, the algorithm is run. The robot moves around the
+            map, and the predicted location of the robot is updates as it moves.
+            The red in the simulator corresponds to the information generated by
+            the odometry model. Meanwhile, the gread corresponds to the ground
+            truth and the blue line corresponds to the robot’s belief. Since the
+            robot’s ground truth and belief remain consistent after multiple
+            iterations of running the simulator, the Bayes filter seems to be
+            accurate in its localization.
           </p>
         </div>
         <div class="video-container">
@@ -181,11 +239,32 @@
             allowfullscreen
           ></iframe>
         </div>
-        <div class="image-section">
-          <img
-            src="resources/images/12graph.png"
-            alt="Lab 1 Detailed Analysis"
-          />
+        <div class="video-container">
+          <iframe
+            width="315"
+            height="515"
+            src="https://www.youtube.com/embed/RWeG-javdyQ"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div class="content-wrapper">
+          <div class="content">
+            <div class="image-section">
+              <img
+                src="resources/images/12graph.png"
+                alt="Lab 1 Detailed Analysis"
+              />
+            </div>
+            <div class="image-section">
+              <img
+                src="resources/images/12graph2.png"
+                alt="Lab 1 Detailed Analysis"
+              />
+            </div>
+          </div>
         </div>
       </section>
     </main>
