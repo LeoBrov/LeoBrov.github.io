@@ -175,13 +175,13 @@
           <p>
             To implement the controller, I used a similar method to orientation
             control in lab 6. However, to optimize for computation, I isolated
-            the code such that it would not listen for bluetooth signals. The
-            key to being able to complete the inverted pendulum problem was
-            using DMP, which provided much more accurate pitch data than using
-            just the accelerometers. This allowed me to balance around a
-            relatively consistent angle. However, even with DMP, the angle would
-            shift slightly, so I implemented a command that would allow me to
-            make slight correct to the angle that the robot is balancing around.
+            the code such that it would not listen to Bluetooth signals. The key
+            to being able to complete the inverted pendulum problem was using
+            DMP, which provided much more accurate pitch data than using just
+            the accelerometers. This allowed me to balance around a relatively
+            consistent angle. However, even with DMP, the angle would shift
+            slightly, so I implemented a command that would allow me to make
+            slight correct to the angle that the robot is balancing around.
           </p>
         </div>
         <div class="image-section">
@@ -228,6 +228,22 @@
             accurate in its localization.
           </p>
         </div>
+        <div class="content-wrapper">
+          <div class="content">
+            <div class="image-section">
+              <img
+                src="resources/images/12graph.png"
+                alt="Lab 1 Detailed Analysis"
+              />
+            </div>
+            <div class="image-section">
+              <img
+                src="resources/images/12graph2.png"
+                alt="Lab 1 Detailed Analysis"
+              />
+            </div>
+          </div>
+        </div>
         <div class="video-container">
           <iframe
             width="315"
@@ -250,21 +266,23 @@
             allowfullscreen
           ></iframe>
         </div>
-        <div class="content-wrapper">
-          <div class="content">
-            <div class="image-section">
-              <img
-                src="resources/images/12graph.png"
-                alt="Lab 1 Detailed Analysis"
-              />
-            </div>
-            <div class="image-section">
-              <img
-                src="resources/images/12graph2.png"
-                alt="Lab 1 Detailed Analysis"
-              />
-            </div>
-          </div>
+      </section>
+      <section class="section">
+        <h2 class="section-header">Section 4: Conclusion</h2>
+        <div class="text-section">
+          <p>
+            I spent a lot of time playing around with different methods of
+            getting the robot to balance on two wheels. I tried strapping a tall
+            pole to the robot to increase its moment of inertia, I tried running
+            PID on pitch squared, and I tried implementing integral control.
+            Among these methods and a few others, none worked very well.
+            However, I did learn a lot about the challenges of controlling a
+            fast-moving robot. In the future, I would love to implement a state
+            space control algorithm with a better model of the system's
+            dynamics. I might get a better IMU and some longer-lasting batteries
+            to tackle this problem again. This class has been a lot of fun, and
+            thank you for reading!s
+          </p>
         </div>
       </section>
     </main>
